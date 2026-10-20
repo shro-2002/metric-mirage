@@ -1,0 +1,9 @@
+.finding {
+  max-width: 22ch;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 1.2rem + 3.6vw, 3.75rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}

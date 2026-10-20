@@ -19,7 +19,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
   Learner check: Run `npm run dev`, open the local URL, and confirm the headline and both rates appear in the editorial style. Then open `src/engine/analyze.test.ts` and find the test that proves rate effect + composition effect = overall change.
   Commit: `feat: scaffold app and tested rate/mix engine with flagship headline`
 
-- [ ] **2. Look beneath the headline: the signature reveal**
+- [x] **2. Look beneath the headline: the signature reveal**
   Becomes usable: Clicking **Look beneath the headline** keeps the headline in place and opens the investigation beneath it. You see four site rows each showing a 2.0-point decline, the finding "Every site declined. So why did the overall rate rise?", the waterfall (−2.0 + 6.0 = +4.0) and a plain-English composition explanation. Works with the keyboard and without animation.
   Why now: This is the unique kernel (rate-versus-mix explanation delivered through the reveal). It comes immediately after the engine exists so the most important experience gets the most iteration and early feedback.
   PRD ref: `prd.md > The Core Journey` (steps 2–3), `prd.md > The reveal and the decomposition`, `prd.md > Look and Feel`, `prd.md > Honest analysis for every valid dataset`

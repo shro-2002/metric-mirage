@@ -1,4 +1,5 @@
 import { HeadlineBlock } from './components/HeadlineBlock'
+import { Investigation } from './components/Investigation'
 import { Masthead } from './components/Masthead'
 import { useInvestigation } from './useInvestigation'
 import './App.css'
@@ -21,6 +22,7 @@ export function App() {
           investigationId={INVESTIGATION_ID}
           onToggle={toggleReveal}
         />
+        {revealed && <Investigation id={INVESTIGATION_ID} analysis={analysis} terms={terms} />}
       </main>
       <footer className="footer page">
         <p>
