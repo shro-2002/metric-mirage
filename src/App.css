@@ -1,0 +1,12 @@
+.footer {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-7);
+  margin-top: var(--space-section);
+  border-top: 1px solid var(--rule);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.footer p {
+  max-width: var(--measure);
+}

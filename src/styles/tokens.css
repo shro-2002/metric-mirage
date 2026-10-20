@@ -1,0 +1,52 @@
+:root {
+  /* Color — meaning, not decoration. All text pairs ≥ 4.5:1 on --paper. */
+  --paper: #faf6ee;
+  --paper-deep: #f2ebdd;
+  --ink: #1b2430;
+  --muted: #5b6470;
+  --rule: #d9cfbc;
+  --improve: #1f6f6b;
+  --decline: #b4472b;
+  --composition: #3f4a9a;
+  --improve-wash: #e3eeec;
+  --decline-wash: #f6e4dd;
+  --composition-wash: #e6e7f3;
+
+  /* Type */
+  --font-serif: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+  --text-figure: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  --text-hero: clamp(2.75rem, 1.4rem + 6vw, 6rem);
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  --space-section: clamp(4rem, 3rem + 5vw, 8rem);
+
+  --measure: 68ch;
+  --page: 64rem;
+  --gutter: clamp(1rem, 0.5rem + 3vw, 2.5rem);
+
+  /* Motion */
+  --duration-fast: 160ms;
+  --duration-reveal: 520ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-reveal: 0ms;
+  }
+}

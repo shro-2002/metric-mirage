@@ -1,0 +1,28 @@
+# Private learner context and working notes (never commit)
+/devpost/learner-profile.md
+/research/
+/.remember/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local tool state (keep only the official skill pack under .claude/skills)
+/.claude/*
+!/.claude/skills/
+.serena/
+.claude-mem/
+.DS_Store
+
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+blob-report/
+*.tsbuildinfo
+*.log
