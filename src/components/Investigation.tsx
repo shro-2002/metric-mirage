@@ -1,8 +1,9 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 
-import { explanation, finding } from '../engine/narrative'
+import { briefing, explanation, finding } from '../engine/narrative'
 import { capitalize, type Terms } from '../engine/terms'
 import type { Analysis } from '../engine/types'
+import { BriefingCard } from './BriefingCard'
 import { FindingCallout } from './FindingCallout'
 import { SiteComparison } from './SiteComparison'
 import { Waterfall } from './Waterfall'
@@ -60,6 +61,16 @@ export function Investigation({ id, analysis, terms }: Props) {
           </h3>
           <Waterfall analysis={analysis} terms={terms} />
           <p className="investigation__explanation">{explanation(analysis, terms)}</p>
+        </div>
+
+        <div className="investigation__step" style={step(4)}>
+          <h3 className="investigation__subhead">
+            <span className="investigation__number" aria-hidden="true">
+              3
+            </span>
+            What to report
+          </h3>
+          <BriefingCard text={briefing(analysis, terms)} />
         </div>
       </div>
     </section>

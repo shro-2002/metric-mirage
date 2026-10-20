@@ -7,6 +7,8 @@ export interface Terms {
   unit: string // "students" — what `total` counts
   shareOf: string // "students" / "the total count", as in "North's share of students"
   moreOf: string // "more students" / "more of the total count"
+  mixPhrase: string // "the mix of students across sites" / "the mix across groups"
+  briefingTitle: string
   eyebrow: string
   dek: string // standfirst beside the headline; neutral, never reveals the group-level result
 }
@@ -19,6 +21,8 @@ export const EXAMPLE_TERMS: Terms = {
   unit: 'students',
   shareOf: 'students',
   moreOf: 'more students',
+  mixPhrase: 'the mix of students across sites',
+  briefingTitle: 'Tutoring network performance review',
   eyebrow: 'Tutoring network · Performance review',
   dek: "A fictional tutoring network's monthly report, as it might reach leadership. Four sites, two periods, one number.",
 }
@@ -31,6 +35,8 @@ export const UPLOAD_TERMS: Terms = {
   unit: 'total count',
   shareOf: 'the total count',
   moreOf: 'more of the total count',
+  mixPhrase: 'the mix across groups',
+  briefingTitle: 'Performance review',
   eyebrow: 'Your data · Previous vs. current',
   dek: 'Your two-period file, analyzed entirely in this browser. Nothing was uploaded anywhere.',
 }

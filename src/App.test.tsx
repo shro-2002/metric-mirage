@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 
 import { App } from './App'
 import { tutoringExample } from './data/tutoring-example'
@@ -71,5 +71,34 @@ describe('App — headline and reveal', () => {
     await user.click(screen.getByRole('button', { name: 'Hide the investigation' }))
     expect(screen.getByRole('button', { name: 'Look beneath the headline' })).toHaveFocus()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+})
+
+describe('App — briefing', () => {
+  const reveal = async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Look beneath the headline' }))
+    return user
+  }
+
+  test('copies exactly the briefing shown on screen and confirms', async () => {
+    const user = await reveal()
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    await user.click(screen.getByRole('button', { name: 'Copy briefing' }))
+    expect(writeText).toHaveBeenCalledWith(screen.getByTestId('briefing').textContent)
+    expect(screen.getByRole('status')).toHaveTextContent('Copied')
+  })
+
+  test('falls back to selecting the text when copying is blocked', async () => {
+    const user = await reveal()
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
+      configurable: true,
+    })
+    await user.click(screen.getByRole('button', { name: 'Copy briefing' }))
+    expect(screen.getByRole('status')).toHaveTextContent('text is selected')
+    expect(window.getSelection()?.toString()).toBe(screen.getByTestId('briefing').textContent)
   })
 })

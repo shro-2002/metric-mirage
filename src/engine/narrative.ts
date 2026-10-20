@@ -157,3 +157,76 @@ export const explanation = (analysis: Analysis, terms: Terms): string => {
   if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
   return sentences.join(' ')
 }
+
+const listGroups = (groups: GroupResult[]): string => {
+  const items = groups.map((g) => `${g.name} (${g.display.previousRate} → ${g.display.currentRate})`)
+  return items.length <= 1 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`
+}
+
+const groupResultsSentence = (analysis: Analysis, terms: Terms): string => {
+  const t = tally(analysis)
+  const { groups } = analysis
+  if (t.unchanged === 0 && (t.up === t.total || t.down === t.total)) {
+    const verb = t.up === t.total ? 'improved' : 'declined'
+    return `${allGroups(t.total, terms)}'s ${terms.metric} ${verb}: ${listGroups(groups)}.`
+  }
+  const parts = (
+    [
+      ['rose at', 'up'],
+      ['fell at', 'down'],
+      ['was unchanged at', 'unchanged'],
+    ] as const
+  )
+    .map(([verb, direction]) => [verb, groups.filter((g) => g.direction === direction)] as const)
+    .filter(([, members]) => members.length > 0)
+    .map(([verb, members]) => `${verb} ${listGroups(members)}`)
+  return `${capitalize(terms.metric)} ${parts.join('; ')}.`
+}
+
+const interpretationSentence = (analysis: Analysis, terms: Terms): string => {
+  const { pattern, overall, groups, decomposition } = analysis
+  switch (pattern) {
+    case 'reversal': {
+      const gainer = pickExtreme(groups, 1)
+      const loser = pickExtreme(groups, -1)
+      const rising = overall.direction === 'up'
+      const change = rising ? 'increase' : 'decline'
+      const within = rising ? 'improvement' : 'deterioration'
+      const towardHigher = gainer && loser ? sign(sub(averageRate(gainer), averageRate(loser))) : 0
+      const sameWay = (rising && towardHigher > 0) || (!rising && towardHigher < 0)
+      if (gainer && loser && sameWay) {
+        return `The overall ${change} reflects a shift in the mix toward ${rising ? 'higher' : 'lower'}-performing ${terms.groups} (${gainer.name}'s share of ${terms.shareOf} grew from ${gainer.display.previousShare} to ${gainer.display.currentShare}; ${loser.name}'s fell from ${loser.display.previousShare} to ${loser.display.currentShare}), not ${within} within ${terms.groups}.`
+      }
+      return `The overall ${change} reflects the shift in ${terms.mixPhrase}, not ${within} within ${terms.groups}.`
+    }
+    case 'consistent':
+      return `The overall change and the ${terms.groups} point in the same direction.`
+    case 'mixed':
+      return `Results were mixed across ${terms.groups}, so the overall figure should be read alongside the ${terms.group}-level results.`
+    case 'divergent':
+      return `The overall ${terms.metric} moved differently from the ${terms.groups} that changed; not every ${terms.group} changed, so this is not a complete reversal.`
+    case 'groupsUnchanged':
+      return sign(decomposition.compositionEffect) === 0
+        ? `Neither the ${terms.groups} nor their mix changed.`
+        : `The overall change comes entirely from the shift in ${terms.mixPhrase}.`
+  }
+}
+
+/** Deterministic, copyable management briefing. Every figure comes from `analysis.display`. */
+export const briefing = (analysis: Analysis, terms: Terms): string => {
+  const { display, overall } = analysis
+  const m = terms.metric
+  const opening =
+    overall.direction === 'unchanged'
+      ? `${terms.briefingTitle}: the overall ${m} was unchanged at ${display.currentRate} (${display.net} percentage points).`
+      : `${terms.briefingTitle}: the overall ${m} ${overall.direction === 'up' ? 'rose' : 'fell'} from ${display.previousRate} to ${display.currentRate} (${display.net} percentage points).`
+  const sentences = [
+    opening,
+    `Within-${terms.group} ${terms.metricPlural} changed by ${display.rateEffect} points and ${terms.mixPhrase} by ${display.compositionEffect} points, which together account for the overall change (${display.equation}).`,
+    groupResultsSentence(analysis, terms),
+    interpretationSentence(analysis, terms),
+    'This is a descriptive analysis of two periods; it does not establish causes or statistical significance.',
+  ]
+  if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
+  return sentences.join(' ')
+}

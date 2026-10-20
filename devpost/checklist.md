@@ -29,7 +29,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
   Learner check: Click **Look beneath the headline** and tell me whether the moment lands: do you understand why the overall rate rose within about 15 seconds? Then press Tab to the button and press Enter to try it by keyboard.
   Commit: `feat: add headline reveal with site comparison, finding and rate/mix waterfall`
 
-- [ ] **3. Copy a management briefing**
+- [x] **3. Copy a management briefing**
   Becomes usable: Beneath the waterfall, an executive summary shows a deterministic briefing paragraph whose numbers match the screen. **Copy briefing** puts it on the clipboard and says "Copied"; if copying isn't available, the text is selected for manual copy.
   Why now: Completes the core journey end to end on the flagship (headline → reveal → briefing), so the whole PRD story is demonstrable before CSV work begins.
   PRD ref: `prd.md > The Core Journey` (step 4), `prd.md > The executive briefing`
