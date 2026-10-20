@@ -285,3 +285,62 @@ export const briefingSentences = (analysis: Analysis, terms: Terms): string[] =>
   if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
   return sentences
 }
+
+/**
+ * The "why" in one plain sentence: two forces, each with its size.
+ * Names a direction for the mix shift only when exactly two shares moved
+ * (then that pair accounts for the whole composition effect).
+ */
+export const twoForces = (analysis: Analysis, terms: Terms): string => {
+  const { display, decomposition, groups } = analysis
+  const rateSign = sign(decomposition.rateEffect)
+  const compositionSign = sign(decomposition.compositionEffect)
+  const t = tally(analysis)
+  const groupsWord =
+    t.unchanged === 0 && (t.up === t.total || t.down === t.total) ? `each ${terms.group}` : `the ${terms.groups} themselves, taken together,`
+  const within =
+    rateSign === 0
+      ? `the ${terms.groups} themselves added nothing overall (${display.rateEffect} points)`
+      : `${groupsWord} got ${rateSign < 0 ? 'slightly worse' : 'slightly better'} (${display.rateEffect} points)`
+  const pair = exactPair(groups)
+  const toward =
+    pair && compositionSign !== 0
+      ? sign(sub(averageRate(pair.gainer), averageRate(pair.loser))) > 0
+        ? `, the stronger ${terms.group}`
+        : `, the weaker ${terms.group}`
+      : ''
+  const mix =
+    compositionSign === 0
+      ? `the mix of ${terms.groups} made no difference (${display.compositionEffect} points)`
+      : pair
+        ? `more ${terms.unit === 'students' ? 'students' : 'of the total'} ended up at ${pair.gainer.name}${toward} (${display.compositionEffect} points)`
+        : `the mix across ${terms.groups} shifted (${display.compositionEffect} points)`
+  const netSign = sign(add(decomposition.rateEffect, decomposition.compositionEffect))
+  const verdict =
+    rateSign !== 0 && compositionSign !== 0 && rateSign !== compositionSign
+      ? netSign === compositionSign
+        ? ' The second outweighed the first.'
+        : netSign === 0
+          ? ' The two cancelled out exactly.'
+          : ' The first outweighed the second.'
+      : ''
+  return `Two things changed at once: ${within}, and ${mix}.${verdict}`
+}
+
+/** What reading only the headline would mean for a decision. Honest for every pattern. */
+export const decisionNote = (analysis: Analysis, terms: Terms): string => {
+  const rising = analysis.overall.direction === 'up'
+  switch (analysis.pattern) {
+    case 'reversal':
+      return rising
+        ? `${terms.decisionLead}, it would reward an improvement that no ${terms.group} achieved: every ${terms.group}'s own ${terms.metric} fell. The rise came from where the ${terms.unit === 'students' ? 'students were' : 'totals sat'}, not from how the ${terms.groups} performed.`
+        : `${terms.decisionLead}, it would blame a decline that no ${terms.group} had: every ${terms.group}'s own ${terms.metric} rose. The fall came from the mix, not from how the ${terms.groups} performed.`
+    case 'consistent':
+      return `Here the headline and the ${terms.groups} agree, so the overall figure is a fair summary of the direction. Sizes still differ by ${terms.group}; see the evidence below.`
+    case 'mixed':
+      return `The headline averages ${terms.groups} that moved in opposite directions. Decisions about any single ${terms.group} need the ${terms.group}-level results, not the overall figure.`
+    case 'divergent':
+    case 'groupsUnchanged':
+      return `The overall figure moved differently from the ${terms.groups}. Check the ${terms.group}-level results before acting on it.`
+  }
+}

@@ -158,3 +158,15 @@ describe('App — CSV upload', () => {
     expect(screen.getByText('Fictional example data')).toBeInTheDocument()
   })
 })
+
+describe('App — story after reveal', () => {
+  test('two-forces sentence text is exactly the engine sentence; decision note shown', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Look beneath the headline' }))
+    const { twoForces } = await import('./engine/narrative')
+    const { EXAMPLE_TERMS } = await import('./engine/terms')
+    expect(screen.getByTestId('two-forces').textContent).toBe(twoForces(analyze(tutoringExample), EXAMPLE_TERMS))
+    expect(screen.getByTestId('decision-note')).toHaveTextContent("If next year's site funding followed this headline")
+  })
+})

@@ -93,6 +93,10 @@ Source: `scope.md > Inspiration & Identity`.
 Accepted format (fixed): one row per group per period, columns `period, group, successes, total`; exactly two periods; every group present in both periods; whole-number counts; successes ≤ total; total > 0.
 Source: `scope.md > The POC Boundary`.
 
+### The story beneath the headline (added at final review)
+- [ ] After the finding and comparison, one plain sentence names the two forces with their sizes (within-group change and mix shift) and which outweighed the other.
+- [ ] A short "what this means for the decision" note explains what acting on the headline alone would imply, honest for each pattern. The fictional example frames the decision as next year's site funding; no real-world outcomes are claimed.
+
 ## States and Boundaries
 
 - **First use.** Example loaded, labeled fictional, only the headline and primary action visible.

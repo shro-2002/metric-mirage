@@ -71,6 +71,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
 - [x] Scroll keeps the headline figures in view above the finding and comparison when both fit; otherwise the investigation leads (its Overall row carries the headline)
 - [x] Composition visual: previous/current share-of-total bars, ordered by rate, with a text legend
 - [x] Scannable briefing (lead + points on screen, one paragraph copied); CSV rules behind an accessible disclosure with template links and upload kept visible
+- [x] Stakes and "why" for judges: fictional decision context in the standfirst; a plain "two forces" sentence (figures colored to match the chart) and a pattern-honest "what this means for the decision" note in the reveal
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
@@ -90,3 +91,4 @@ Activity mode:
 - Independent statistical review (bounded subagent) reproduced five defects: non-finite chart floats for very large exact denominators, a false sentence in the divergent briefing, misattributing the mix effect to one pair when 3+ shares move, "groups's" possessive, and shifts invisible at 3 decimals. All fixed with regression tests (`src/engine/review-regressions.test.ts`). The explanation now names a gainer/loser pair only when exactly two shares moved, where that pair accounts for the whole composition effect exactly.
 - Independent accessibility review (bounded subagent) found 2 medium and 7 low issues (no critical/high); all fixed: screen-reader text for rates and arrows, re-announced alerts and copy status, loaded-file status, share moved out of row headers, conditional `aria-controls`, hidden "pts". axe scans report zero WCAG A/AA violations.
 - Reveal reordered and finding reworded at the learner's final-review request: the finding now leads ("Every site declined—even though…") with a compact comparison, and the site table follows as evidence. Updated `prd.md > The Core Journey` wording accordingly. The math engine and pattern logic are unchanged.
+- Added a "two forces" sentence and a decision note to the reveal, plus a funding-decision standfirst for the fictional example, at the learner's request to strengthen impact and presentation. Both are generated from the analysis for every pattern (reversal language only for reversals; no tutoring wording for uploads) and tested in `src/engine/story.test.ts`. Historical kidney-stone case stays deferred: it compares cohorts, not periods, and would need new terminology and a new data path.

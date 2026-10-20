@@ -1,6 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 
-import { briefingSentences, explanation, finding } from '../engine/narrative'
+import { briefingSentences, decisionNote, explanation, finding, twoForces } from '../engine/narrative'
 import { capitalize, type Terms } from '../engine/terms'
 import type { Analysis } from '../engine/types'
 import { BriefingCard } from './BriefingCard'
@@ -15,6 +15,27 @@ type Props = {
   id: string
   analysis: Analysis
   terms: Terms
+}
+
+/** Color the two effect figures inside the "two forces" sentence to match the chart. */
+function ForcesSentence({ analysis, terms }: { analysis: Analysis; terms: Terms }) {
+  const text = twoForces(analysis, terms)
+  const { rateEffect, compositionEffect } = analysis.display
+  const rateTone = rateEffect.startsWith('+') ? 'improve' : rateEffect.startsWith('0') ? 'neutral' : 'decline'
+  const first = text.indexOf(`(${rateEffect} points)`)
+  const second = text.indexOf(`(${compositionEffect} points)`, first + 1)
+  if (first < 0 || second < 0) return <>{text}</>
+  const rateEnd = first + rateEffect.length + 1
+  const compEnd = second + compositionEffect.length + 1
+  return (
+    <>
+      {text.slice(0, first + 1)}
+      <span className={`investigation__figure investigation__figure--${rateTone}`}>{rateEffect}</span>
+      {text.slice(rateEnd, second + 1)}
+      <span className="investigation__figure investigation__figure--composition">{compositionEffect}</span>
+      {text.slice(compEnd)}
+    </>
+  )
 }
 
 const step = (index: number) => ({ '--step': index }) as CSSProperties
@@ -54,7 +75,17 @@ export function Investigation({ id, analysis, terms }: Props) {
           <ChangeSummary analysis={analysis} terms={terms} />
         </div>
 
-        <div className="investigation__step" style={step(2)}>
+        <div className="investigation__why" style={step(2)}>
+          <p className="investigation__forces" data-testid="two-forces">
+            <ForcesSentence analysis={analysis} terms={terms} />
+          </p>
+          <aside className="investigation__decision" aria-label="What this means for the decision">
+            <p className="investigation__decision-label">What this means for the decision</p>
+            <p data-testid="decision-note">{decisionNote(analysis, terms)}</p>
+          </aside>
+        </div>
+
+        <div className="investigation__step" style={step(3)}>
           <h3 className="investigation__subhead">
             <span className="investigation__number" aria-hidden="true">
               1
@@ -64,7 +95,7 @@ export function Investigation({ id, analysis, terms }: Props) {
           <SiteComparison groups={analysis.groups} terms={terms} />
         </div>
 
-        <div className="investigation__step" style={step(3)}>
+        <div className="investigation__step" style={step(4)}>
           <h3 className="investigation__subhead">
             <span className="investigation__number" aria-hidden="true">
               2
@@ -76,7 +107,7 @@ export function Investigation({ id, analysis, terms }: Props) {
           <p className="investigation__explanation">{explanation(analysis, terms)}</p>
         </div>
 
-        <div className="investigation__step" style={step(4)}>
+        <div className="investigation__step" style={step(5)}>
           <h3 className="investigation__subhead">
             <span className="investigation__number" aria-hidden="true">
               3
