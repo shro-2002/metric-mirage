@@ -66,7 +66,11 @@ export const analyze = (dataset: Dataset): Analysis => {
     compositionEffect: toNumber(toPoints(compositionEffect)),
     net: toNumber(toPoints(net)),
   }
-  if (Math.abs(decompositionPoints.rateEffect + decompositionPoints.compositionEffect - decompositionPoints.net) > FLOAT_TOLERANCE_POINTS) {
+  const floats = Object.values(decompositionPoints)
+  if (
+    !floats.every(Number.isFinite) ||
+    Math.abs(decompositionPoints.rateEffect + decompositionPoints.compositionEffect - decompositionPoints.net) > FLOAT_TOLERANCE_POINTS
+  ) {
     throw new InvariantError('Floating-point view of the decomposition does not reconcile')
   }
 

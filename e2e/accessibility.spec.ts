@@ -37,7 +37,7 @@ test('keyboard only: reveal, copy, collapse, reach the upload control', async ({
   await page.keyboard.press('Tab')
   await expect(page.getByRole('button', { name: 'Copy briefing' })).toBeFocused()
   await page.keyboard.press('Enter')
-  await expect(page.getByRole('status')).toContainText('Copied')
+  await expect(page.getByText(/^Copied\./)).toBeVisible()
 
   // Then the format help's downloads, then the file input, in reading order.
   await page.keyboard.press('Tab')

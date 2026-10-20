@@ -11,7 +11,7 @@ type Props = {
   onReturnToExample: () => void
 }
 
-type Feedback = { kind: 'none' } | { kind: 'errors'; fileName: string; errors: ValidationError[] }
+type Feedback = { kind: 'none' } | { kind: 'errors'; attempt: number; fileName: string; errors: ValidationError[] }
 
 const EXAMPLE_ROWS = ['period,group,successes,total', 'previous,North,200,250', 'current,North,312,400', '…']
 
@@ -19,6 +19,7 @@ export function DataPanel({ activeFileName, onLoad, onReturnToExample }: Props) 
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const [feedback, setFeedback] = useState<Feedback>({ kind: 'none' })
+  const attempts = useRef(0)
 
   const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -29,7 +30,8 @@ export function DataPanel({ activeFileName, onLoad, onReturnToExample }: Props) 
       setFeedback({ kind: 'none' })
       onLoad(file.name, result.dataset)
     } else {
-      setFeedback({ kind: 'errors', fileName: file.name, errors: result.errors })
+      attempts.current += 1
+      setFeedback({ kind: 'errors', attempt: attempts.current, fileName: file.name, errors: result.errors })
     }
   }
 
@@ -48,9 +50,10 @@ export function DataPanel({ activeFileName, onLoad, onReturnToExample }: Props) 
       <div className="data__body">
         <div className="data__format">
           <h3 className="data__subtitle">Format</h3>
-          <pre className="data__sample num" aria-label="Example of the accepted format">
-            {EXAMPLE_ROWS.join('\n')}
-          </pre>
+          <figure className="data__figure">
+            <pre className="data__sample num">{EXAMPLE_ROWS.join('\n')}</pre>
+            <figcaption className="visually-hidden">Example of the accepted format, first rows</figcaption>
+          </figure>
           <ul className="data__rules">
             <li>
               <code>period</code> is exactly <code>previous</code> or <code>current</code>.
@@ -95,7 +98,8 @@ export function DataPanel({ activeFileName, onLoad, onReturnToExample }: Props) 
           )}
 
           {feedback.kind === 'errors' && (
-            <div id={`${inputId}-errors`} className="data__errors" role="alert">
+            // A fresh key per attempt re-creates the alert so a repeated failure is announced again.
+            <div key={feedback.attempt} id={`${inputId}-errors`} className="data__errors" role="alert">
               <p className="data__errors-title">
                 {feedback.fileName} couldn't be analyzed. Nothing on the page changed. Fix the following and try again:
               </p>

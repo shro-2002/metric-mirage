@@ -22,6 +22,9 @@ const allGroups = (n: number, terms: Terms): string => {
   return `Every ${terms.group}`
 }
 
+/** "Every site's", "Both groups'", "The site's". */
+const allGroupsPossessive = (n: number, terms: Terms): string => (n === 2 ? `Both ${terms.groups}'` : `${allGroups(n, terms)}'s`)
+
 const tally = (analysis: Analysis) => {
   const up = analysis.groups.filter((g) => g.direction === 'up').length
   const down = analysis.groups.filter((g) => g.direction === 'down').length
@@ -83,6 +86,33 @@ export const finding = (analysis: Analysis, terms: Terms): string => {
 const shareChange = (g: GroupResult): Rational => sub(g.current.share, g.previous.share)
 const averageRate = (g: GroupResult): Rational => add(g.previous.rate, g.current.rate) // ×2, fine for comparison
 
+/** Shares visibly moved (their displayed values differ). */
+const shareVisiblyMoved = (g: GroupResult): boolean => g.display.previousShare !== g.display.currentShare
+
+/**
+ * The single gainer/loser pair, only when exactly two groups' shares changed.
+ * Shares sum to 1, so the pair's changes are equal and opposite and the whole
+ * composition effect is exactly (avg rate of gainer − avg rate of loser) × share moved.
+ * With more groups moving, naming one pair could misattribute the effect.
+ */
+const exactPair = (groups: GroupResult[]): { gainer: GroupResult; loser: GroupResult } | undefined => {
+  const movers = groups.filter((g) => sign(shareChange(g)) !== 0)
+  if (movers.length !== 2) return undefined
+  const gainer = movers.find((g) => sign(shareChange(g)) > 0)
+  const loser = movers.find((g) => sign(shareChange(g)) < 0)
+  return gainer && loser && shareVisiblyMoved(gainer) ? { gainer, loser } : undefined
+}
+
+/** "had the higher pass rate in both periods" / "on average across the two periods". */
+const levelComparison = (gainer: GroupResult, loser: GroupResult, terms: Terms): string | undefined => {
+  const avg = sign(sub(averageRate(gainer), averageRate(loser)))
+  if (avg === 0) return undefined
+  const level = avg > 0 ? 'higher' : 'lower'
+  const bothPeriods =
+    sign(sub(gainer.previous.rate, loser.previous.rate)) === avg && sign(sub(gainer.current.rate, loser.current.rate)) === avg
+  return `had the ${level} ${terms.metric} ${bothPeriods ? 'in both periods' : 'on average across the two periods'}`
+}
+
 const pickExtreme = (groups: GroupResult[], wanted: 1 | -1): GroupResult | undefined =>
   groups
     .filter((g) => sign(shareChange(g)) === wanted)
@@ -105,7 +135,7 @@ const withinSentence = (analysis: Analysis, terms: Terms): string => {
   const allSame = t.unchanged === 0 && (t.up === t.total || t.down === t.total)
   const effect = `${rateSign < 0 ? 'pulled the overall rate down' : 'pushed the overall rate up'} by ${unsigned(display.rateEffect)} points`
   return allSame
-    ? `${allGroups(groups.length, terms)}'s own ${m} ${moved(groups[0]!.direction)}, which on its own ${effect}.`
+    ? `${allGroupsPossessive(groups.length, terms)} own ${m} ${moved(groups[0]!.direction)}, which on its own ${effect}.`
     : `Weighted by size, the changes within the ${terms.groups} on their own ${effect}.`
 }
 
@@ -118,40 +148,50 @@ export const explanation = (analysis: Analysis, terms: Terms): string => {
   const m = terms.metric
   const sentences: string[] = [withinSentence(analysis, terms)]
 
-  const gainer = pickExtreme(groups, 1)
-  const loser = pickExtreme(groups, -1)
   const rateSign = sign(decomposition.rateEffect)
   const compositionSign = sign(decomposition.compositionEffect)
   const mixAmount = unsigned(display.compositionEffect)
+  const verb = compositionSign > 0 ? 'added' : 'took away'
+  // With opposite signs, sign(rate + composition) tells which part is larger, exactly.
+  const netSign = sign(add(decomposition.rateEffect, decomposition.compositionEffect))
+  const offsets =
+    rateSign === 0 || compositionSign === 0 || rateSign === compositionSign
+      ? ''
+      : netSign === compositionSign
+        ? `, more than offsetting the change within the ${terms.groups}`
+        : netSign === 0
+          ? `, exactly offsetting the change within the ${terms.groups}`
+          : `, offsetting part of the change within the ${terms.groups}`
 
-  if (!gainer || !loser) {
+  const visibleMovers = groups.filter(shareVisiblyMoved)
+  const pair = exactPair(groups)
+
+  if (groups.every((g) => sign(shareChange(g)) === 0)) {
     sentences.push(`The mix of ${terms.groups} did not change, so the whole change comes from within the ${terms.groups}.`)
-  } else {
+  } else if (visibleMovers.length === 0) {
+    sentences.push(`The mix of ${terms.groups} shifted only very slightly, and taken together the shift ${verb} ${mixAmount} points${offsets}.`)
+  } else if (pair) {
+    const { gainer, loser } = pair
     sentences.push(
       `Meanwhile, ${gainer.name}'s share of ${terms.shareOf} grew from ${gainer.display.previousShare} to ${gainer.display.currentShare}, while ${loser.name}'s fell from ${loser.display.previousShare} to ${loser.display.currentShare}.`,
     )
-    const gainerHigher = sign(sub(averageRate(gainer), averageRate(loser)))
-    // With opposite signs, sign(rate + composition) tells which part is larger, exactly.
-    const netSign = sign(add(decomposition.rateEffect, decomposition.compositionEffect))
-    const offsets =
-      rateSign === 0 || compositionSign === 0 || rateSign === compositionSign
-        ? ''
-        : netSign === compositionSign
-          ? `, more than offsetting the change within the ${terms.groups}`
-          : netSign === 0
-            ? `, exactly offsetting the change within the ${terms.groups}`
-            : `, offsetting part of the change within the ${terms.groups}`
-    const verb = compositionSign > 0 ? 'added' : 'took away'
-    if (compositionSign === 0) {
-      sentences.push(`Taken together, these shifts in mix left the overall ${m} unchanged.`)
-    } else if ((gainerHigher > 0 && compositionSign > 0) || (gainerHigher < 0 && compositionSign < 0)) {
-      const level = gainerHigher > 0 ? 'higher' : 'lower'
-      sentences.push(
-        `${gainer.name} has the ${level} ${m} of the two, so with ${terms.moreOf} there, the shift in mix ${verb} ${mixAmount} points${offsets}.`,
-      )
-    } else {
-      sentences.push(`Taken together, the shifts in mix ${verb} ${mixAmount} points${offsets}.`)
-    }
+    const level = levelComparison(gainer, loser, terms)
+    sentences.push(
+      level && compositionSign !== 0
+        ? `${gainer.name} ${level}, so with ${terms.moreOf} there, the shift in mix ${verb} ${mixAmount} points${offsets}.`
+        : `Taken together, the shift in mix ${compositionSign === 0 ? 'left the overall rate unchanged' : `${verb} ${mixAmount} points${offsets}`}.`,
+    )
+  } else {
+    const gainer = pickExtreme(groups, 1)!
+    const loser = pickExtreme(groups, -1)!
+    sentences.push(
+      `Shares shifted among several ${terms.groups}: the largest gain was ${gainer.name} (${gainer.display.previousShare} → ${gainer.display.currentShare}) and the largest drop ${loser.name} (${loser.display.previousShare} → ${loser.display.currentShare}).`,
+    )
+    sentences.push(
+      compositionSign === 0
+        ? `Taken together, these shifts left the overall ${m} unchanged.`
+        : `Taken together, these shifts in mix ${verb} ${mixAmount} points${offsets}.`,
+    )
   }
 
   if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
@@ -159,7 +199,12 @@ export const explanation = (analysis: Analysis, terms: Terms): string => {
 }
 
 const listGroups = (groups: GroupResult[]): string => {
-  const items = groups.map((g) => `${g.name} (${g.display.previousRate} → ${g.display.currentRate})`)
+  // When rounding makes both rates look identical, include the signed change so "rose" is visible.
+  const items = groups.map((g) =>
+    g.display.previousRate === g.display.currentRate && g.direction !== 'unchanged'
+      ? `${g.name} (${g.display.previousRate} → ${g.display.currentRate}, ${g.display.change} points)`
+      : `${g.name} (${g.display.previousRate} → ${g.display.currentRate})`,
+  )
   return items.length <= 1 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`
 }
 
@@ -168,7 +213,7 @@ const groupResultsSentence = (analysis: Analysis, terms: Terms): string => {
   const { groups } = analysis
   if (t.unchanged === 0 && (t.up === t.total || t.down === t.total)) {
     const verb = t.up === t.total ? 'improved' : 'declined'
-    return `${allGroups(t.total, terms)}'s ${terms.metric} ${verb}: ${listGroups(groups)}.`
+    return `${allGroupsPossessive(t.total, terms)} ${terms.metric} ${verb}: ${listGroups(groups)}.`
   }
   const parts = (
     [
@@ -187,14 +232,13 @@ const interpretationSentence = (analysis: Analysis, terms: Terms): string => {
   const { pattern, overall, groups, decomposition } = analysis
   switch (pattern) {
     case 'reversal': {
-      const gainer = pickExtreme(groups, 1)
-      const loser = pickExtreme(groups, -1)
       const rising = overall.direction === 'up'
       const change = rising ? 'increase' : 'decline'
       const within = rising ? 'improvement' : 'deterioration'
-      const towardHigher = gainer && loser ? sign(sub(averageRate(gainer), averageRate(loser))) : 0
-      const sameWay = (rising && towardHigher > 0) || (!rising && towardHigher < 0)
-      if (gainer && loser && sameWay) {
+      const pair = exactPair(groups)
+      const towardHigher = pair ? sign(sub(averageRate(pair.gainer), averageRate(pair.loser))) : 0
+      if (pair && ((rising && towardHigher > 0) || (!rising && towardHigher < 0))) {
+        const { gainer, loser } = pair
         return `The overall ${change} reflects a shift in the mix toward ${rising ? 'higher' : 'lower'}-performing ${terms.groups} (${gainer.name}'s share of ${terms.shareOf} grew from ${gainer.display.previousShare} to ${gainer.display.currentShare}; ${loser.name}'s fell from ${loser.display.previousShare} to ${loser.display.currentShare}), not ${within} within ${terms.groups}.`
       }
       return `The overall ${change} reflects the shift in ${terms.mixPhrase}, not ${within} within ${terms.groups}.`
@@ -203,8 +247,16 @@ const interpretationSentence = (analysis: Analysis, terms: Terms): string => {
       return `The overall change and the ${terms.groups} point in the same direction.`
     case 'mixed':
       return `Results were mixed across ${terms.groups}, so the overall figure should be read alongside the ${terms.group}-level results.`
-    case 'divergent':
-      return `The overall ${terms.metric} moved differently from the ${terms.groups} that changed; not every ${terms.group} changed, so this is not a complete reversal.`
+    case 'divergent': {
+      const t = tally(analysis)
+      if (overall.direction === 'unchanged' && t.unchanged === 0) {
+        return `Every ${terms.group} moved the same way, yet the overall ${terms.metric} did not change: the shift in ${terms.mixPhrase} exactly offset the change within ${terms.groups}.`
+      }
+      if (overall.direction === 'unchanged') {
+        return `The overall ${terms.metric} did not change even though some ${terms.groups} did; the shift in ${terms.mixPhrase} offset the change within them.`
+      }
+      return `The overall ${terms.metric} moved against every ${terms.group} that changed, but not every ${terms.group} changed, so this is not a complete reversal.`
+    }
     case 'groupsUnchanged':
       return sign(decomposition.compositionEffect) === 0
         ? `Neither the ${terms.groups} nor their mix changed.`

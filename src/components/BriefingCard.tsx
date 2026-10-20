@@ -40,6 +40,7 @@ export function BriefingCard({ text }: Props) {
   }
 
   const handleCopy = async () => {
+    setState('idle') // clear first so a repeated message is announced again
     try {
       if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable')
       await navigator.clipboard.writeText(text)

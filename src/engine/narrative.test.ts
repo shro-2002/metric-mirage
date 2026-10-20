@@ -78,7 +78,7 @@ describe('explanation', () => {
     expect(text).toBe(
       "Every site's own pass rate fell, which on its own pulled the overall rate down by 2.0 points. " +
         "Meanwhile, North's share of students grew from 25.0% to 40.0%, while West's fell from 25.0% to 10.0%. " +
-        'North has the higher pass rate of the two, so with more students there, the shift in mix added 6.0 points, more than offsetting the change within the sites.',
+        'North had the higher pass rate in both periods, so with more students there, the shift in mix added 6.0 points, more than offsetting the change within the sites.',
     )
     expect(text).not.toContain('=')
   })

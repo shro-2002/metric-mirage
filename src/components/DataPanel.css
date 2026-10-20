@@ -41,6 +41,10 @@
   color: var(--muted);
 }
 
+.data__figure {
+  margin: 0;
+}
+
 .data__sample {
   margin: var(--space-3) 0 0;
   padding: var(--space-3) var(--space-4);

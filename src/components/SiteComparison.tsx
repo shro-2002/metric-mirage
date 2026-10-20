@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { capitalize, type Terms } from '../engine/terms'
 import { sign, sub, toNumber } from '../engine/rational'
 import type { Direction, GroupResult } from '../engine/types'
+import { Arrow } from './Arrow'
 import './SiteComparison.css'
 
 type Props = {
@@ -40,14 +41,14 @@ function ShareChange({ group, terms }: { group: GroupResult; terms: Terms }) {
     <span className={`sites__share num${shift !== 0 ? ' sites__share--moved' : ''}`}>
       Share<span className="sites__share-long"> of {terms.shareOf}</span>:{' '}
       <span className="sites__share-values">
-        {group.display.previousShare} → {group.display.currentShare}
+        {group.display.previousShare} <Arrow /> {group.display.currentShare}
+        {marker && (
+          <span aria-hidden="true" className="sites__share-marker">
+            {' '}
+            {marker}
+          </span>
+        )}
       </span>
-      {marker && (
-        <span aria-hidden="true" className="sites__share-marker">
-          {' '}
-          {marker}
-        </span>
-      )}
     </span>
   )
 }
@@ -63,7 +64,10 @@ export function SiteComparison({ groups, terms }: Props) {
         <tr>
           <th scope="col">{capitalize(terms.group)}</th>
           <th scope="col">
-            {capitalize(terms.metric)} <span className="sites__hint">previous → current</span>
+            {capitalize(terms.metric)}{' '}
+            <span className="sites__hint">
+              previous <Arrow /> current
+            </span>
           </th>
           <th scope="col" className="sites__change-head">
             Change <span className="sites__hint">points</span>
@@ -75,14 +79,13 @@ export function SiteComparison({ groups, terms }: Props) {
           <tr key={g.name} className={`sites__row sites__row--${g.direction}`}>
             <th scope="row" className="sites__name">
               <span className="sites__label">{g.name}</span>
-              <ShareChange group={g} terms={terms} />
             </th>
             <td className="sites__rates">
               <span className="num">
-                {g.display.previousRate} <span aria-hidden="true">→</span>
-                <span className="visually-hidden">to</span> <strong>{g.display.currentRate}</strong>
+                {g.display.previousRate} <Arrow /> <strong>{g.display.currentRate}</strong>
               </span>
               <RateTrack group={g} />
+              <ShareChange group={g} terms={terms} />
             </td>
             <td className="sites__change">
               <span className={`change change--${g.direction}`}>

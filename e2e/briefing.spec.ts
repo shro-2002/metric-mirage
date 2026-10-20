@@ -10,7 +10,7 @@ test('Copy briefing puts the exact on-screen briefing on the clipboard', async (
   expect(shown).toContain('the overall pass rate rose from 62.5% to 66.5% (+4.0 percentage points)')
 
   await page.getByRole('button', { name: 'Copy briefing' }).click()
-  await expect(page.getByRole('status')).toContainText('Copied')
+  await expect(page.getByText(/^Copied\./)).toBeVisible()
   const copied = await page.evaluate(() => navigator.clipboard.readText())
   expect(copied).toBe(shown)
   await context.close()

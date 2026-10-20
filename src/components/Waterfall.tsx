@@ -86,7 +86,11 @@ export function Waterfall({ analysis, terms }: Props) {
               </div>
               <span className={`waterfall__value num waterfall__value--${bar.tone}`}>
                 {bar.value}
-                <span className="waterfall__unit"> pts</span>
+                <span className="waterfall__unit" aria-hidden="true">
+                  {' '}
+                  pts
+                </span>
+                <span className="visually-hidden"> points</span>
               </span>
               <svg
                 className="waterfall__chart"

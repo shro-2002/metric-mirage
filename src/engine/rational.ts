@@ -40,8 +40,14 @@ export const sum = (values: Rational[]): Rational => values.reduce(add, ZERO)
 export const sign = (a: Rational): -1 | 0 | 1 => (a.n < 0n ? -1 : a.n > 0n ? 1 : 0)
 export const equals = (a: Rational, b: Rational): boolean => a.n === b.n && a.d === b.d
 
-/** Approximate value, for chart geometry and float cross-checks only. */
-export const toNumber = (a: Rational): number => Number(a.n) / Number(a.d)
+const FLOAT_SCALE = 10n ** 18n
+
+/**
+ * Approximate value, for chart geometry and float cross-checks only.
+ * Divides in BigInt first: numerator and denominator can each exceed the
+ * float range (e.g. 50 groups with large prime totals) even when the value is small.
+ */
+export const toNumber = (a: Rational): number => Number((a.n * FLOAT_SCALE) / a.d) / Number(FLOAT_SCALE)
 
 /**
  * Round `value × 10^decimals` to the nearest integer, ties away from zero,

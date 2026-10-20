@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import { headline } from '../engine/narrative'
+import { Arrow } from './Arrow'
 import type { Terms } from '../engine/terms'
 import type { Analysis } from '../engine/types'
 import './HeadlineBlock.css'
@@ -38,26 +39,30 @@ export function HeadlineBlock({ sourceVersion, analysis, terms, sourceLabel, isR
       </div>
 
       <div className="headline__figures" id="headline-figures">
-        <p className="headline__rates num" aria-label={`Overall ${terms.metric}: ${display.previousRate} in the previous period, ${display.currentRate} in the current period`}>
+        <p className="headline__rates num">
+          <span className="visually-hidden">Overall {terms.metric}, previous period: </span>
           <span className="headline__rate">{display.previousRate}</span>
           <span className="headline__arrow" aria-hidden="true">→</span>
+          <span className="visually-hidden">, current period: </span>
           <span className="headline__rate headline__rate--current">{display.currentRate}</span>
         </p>
         <p className="headline__caption">
-          Overall {terms.metric}, previous period → current period ·{' '}
+          Overall {terms.metric}, previous period <Arrow /> current period ·{' '}
           <span className="num">
-            {overall.previous.total.toLocaleString('en-US')} → {overall.current.total.toLocaleString('en-US')}
+            {overall.previous.total.toLocaleString('en-US')} <Arrow /> {overall.current.total.toLocaleString('en-US')}
           </span>{' '}
           {terms.unit}
         </p>
-        <p className="headline__source">{sourceLabel}</p>
+        <p className="headline__source" role="status">
+          {sourceLabel}
+        </p>
       </div>
 
       <button
         type="button"
         className="headline__action"
         aria-expanded={isRevealed}
-        aria-controls={investigationId}
+        aria-controls={isRevealed ? investigationId : undefined}
         onClick={onToggle}
       >
         <span>{isRevealed ? 'Hide the investigation' : 'Look beneath the headline'}</span>

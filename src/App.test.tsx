@@ -88,7 +88,7 @@ describe('App — briefing', () => {
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
     await user.click(screen.getByRole('button', { name: 'Copy briefing' }))
     expect(writeText).toHaveBeenCalledWith(screen.getByTestId('briefing').textContent)
-    expect(screen.getByRole('status')).toHaveTextContent('Copied')
+    expect(screen.getByText(/^Copied\./)).toBeInTheDocument()
   })
 
   test('falls back to selecting the text when copying is blocked', async () => {
@@ -98,7 +98,7 @@ describe('App — briefing', () => {
       configurable: true,
     })
     await user.click(screen.getByRole('button', { name: 'Copy briefing' }))
-    expect(screen.getByRole('status')).toHaveTextContent('text is selected')
+    expect(screen.getByText(/text is selected/)).toBeInTheDocument()
     expect(window.getSelection()?.toString()).toBe(screen.getByTestId('briefing').textContent)
   })
 })
