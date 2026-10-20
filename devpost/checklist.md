@@ -49,7 +49,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
   Learner check: Download the second sample, upload it, and check the result is honest (no forced warning). Then edit a period label to `Previous` (capital P), upload it, and judge whether the error message tells you exactly what to fix.
   Commit: `feat: add fixed-format CSV upload with strict validation and samples`
 
-- [ ] **5. Works for everyone, on every screen**
+- [x] **5. Works for everyone, on every screen**
   Becomes usable: The complete journey works on a phone-width screen, by keyboard only, with reduced motion, and passes an automated accessibility scan; the color tokens meet contrast targets; the README explains how to run it.
   Why now: Accessibility and responsiveness are PRD requirements, not polish; checking them across the finished journey in one pass catches interactions between components that per-slice checks miss. Last before final review because it needs every surface to exist.
   PRD ref: `prd.md > States and Boundaries` (keyboard, reduced motion, mobile), `prd.md > Look and Feel`
@@ -82,3 +82,5 @@ Activity mode:
 
 ## Revisions
 - Slice 2 checkpoint feedback applied — learner asked for a stronger at-a-glance reveal, headline continuity, focus return on collapse, and a less repetitive explanation. Added a neutral standfirst beside the headline (desktop read as unfinished), terracotta change pills, headline-anchored scroll on reveal, a focus-return test, and an explanation that interprets the split instead of restating the equation. No scope change.
+- Independent statistical review (bounded subagent) reproduced five defects: non-finite chart floats for very large exact denominators, a false sentence in the divergent briefing, misattributing the mix effect to one pair when 3+ shares move, "groups's" possessive, and shifts invisible at 3 decimals. All fixed with regression tests (`src/engine/review-regressions.test.ts`). The explanation now names a gainer/loser pair only when exactly two shares moved, where that pair accounts for the whole composition effect exactly.
+- Independent accessibility review (bounded subagent) found 2 medium and 7 low issues (no critical/high); all fixed: screen-reader text for rates and arrows, re-announced alerts and copy status, loaded-file status, share moved out of row headers, conditional `aria-controls`, hidden "pts". axe scans report zero WCAG A/AA violations.
