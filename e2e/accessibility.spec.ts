@@ -45,6 +45,8 @@ test('keyboard only: reveal, copy, collapse, reach the upload control', async ({
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Download a second sample' })).toBeFocused()
   await page.keyboard.press('Tab')
+  await expect(page.getByText('Accepted format and rules')).toBeFocused()
+  await page.keyboard.press('Tab')
   await expect(page.getByLabel('Choose a CSV file')).toBeFocused()
 
   await page.getByRole('button', { name: 'Hide the investigation' }).focus()

@@ -30,9 +30,8 @@
   margin-top: var(--space-8);
 }
 
-.investigation__step--finding {
-  margin-top: var(--space-8);
-  margin-bottom: var(--space-8);
+.investigation__lead {
+  margin-top: var(--space-4);
 }
 
 .investigation__subhead {

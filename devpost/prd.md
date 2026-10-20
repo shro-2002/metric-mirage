@@ -11,7 +11,7 @@ Source: `scope.md > The Unique Kernel`, `scope.md > The Core Loop`, `scope.md > 
 ## The Core Journey
 
 1. **Arrive.** The page opens already loaded with the fictional tutoring-network example, clearly labeled fictional. The first screen shows only the headline finding: "Pass rates are up 4 points." and `62.5% → 66.5%`, with one prominent action, **Look beneath the headline**. No site-level conclusion is visible yet.
-2. **Reveal the sites (Step A).** Clicking the action keeps the headline on screen as an anchor and expands the investigation beneath it. Four site rows appear (North 80% → 78%, East 70% → 68%, South 60% → 58%, West 40% → 38%), each showing its decline. The central finding appears: **"Every site declined. So why did the overall rate rise?"**
+2. **Reveal the sites (Step A).** Clicking the action keeps the headline on screen as an anchor and expands the investigation beneath it. Four site rows appear (North 80% → 78%, East 70% → 68%, South 60% → 58%, West 40% → 38%), each showing its decline. The central finding appears first: **"Every site declined—even though the overall pass rate rose."** (wording revised by the learner at final review), with a compact comparison of the overall change against each site's change
 3. **Explain the change (Step B).** A simple waterfall shows the overall change as two parts: within-site rate change **−2.0 pp** and composition change **+6.0 pp**, netting to **+4.0 pp**, with the equation "−2.0 + 6.0 = +4.0 percentage points" in text. A plain-English sentence explains the composition effect.
 4. **Take the outcome (Step C).** An executive-summary block shows a deterministic, numerically accurate briefing paragraph and a **Copy briefing** button. Copying confirms visibly.
 5. **Try their own data.** A visible, secondary **Analyze your own CSV** option lets them download a template and upload a file in the fixed format. A valid upload replaces the example and runs the same journey (steps 1–4) on their data, adapting honestly to what that data shows.
@@ -60,7 +60,7 @@ Source: `scope.md > Inspiration & Identity`.
 - As a program manager, I want to look beneath the headline so that I can see what happened at each site and why the overall number moved.
   - [ ] Clicking **Look beneath the headline** keeps the headline visible and expands the investigation beneath it; it does not navigate to a different page.
   - [ ] Each site row shows previous rate → current rate and its signed change with a text/indicator for direction.
-  - [ ] The central finding line is generated from the data (e.g., "Every site declined. So why did the overall rate rise?" for the example).
+  - [ ] The central finding line is generated from the data (e.g., "Every site declined—even though the overall pass rate rose." for the example).
   - [ ] The decomposition shows within-site change, composition change, and net change, and the net equals the overall change shown in the headline.
   - [ ] The equation is shown in text (`−2.0 + 6.0 = +4.0 percentage points`) alongside the graphic.
   - [ ] A plain-English sentence explains the composition effect using the actual data (which site's share grew or shrank), avoiding statistical jargon.
@@ -80,7 +80,7 @@ Source: `scope.md > Inspiration & Identity`.
   - [ ] **Overall declines:** the negative change is explained as accurately as a positive one.
   - [ ] **Some sites improve, others decline:** described as a mixed result, and distinguished from a complete reversal.
   - [ ] **Complete reversal** (every site moved one direction while the overall rate moved the opposite direction): highlighted as such.
-  - [ ] The signature "Every site declined. So why did the overall rate rise?" framing appears only when the data actually shows a reversal.
+  - [ ] The signature "Every site declined—even though…" framing appears only when the data actually shows a reversal.
   - [ ] No causal claims or statistical-significance claims are made anywhere.
 
 ### CSV upload

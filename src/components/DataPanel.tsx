@@ -42,28 +42,13 @@ export function DataPanel({ activeFileName, onLoad, onReturnToExample }: Props) 
           Analyze your own CSV
         </h2>
         <p className="data__lede">
-          Check your own number before you report it. Two periods, one row per group per period. Your file is read in
-          this browser and never uploaded.
+          Check your own number before you report it. A CSV with columns <code>period, group, successes, total</code>{' '}
+          for two periods. Your file is read in this browser and never uploaded.
         </p>
       </div>
 
       <div className="data__body">
         <div className="data__format">
-          <h3 className="data__subtitle">Format</h3>
-          <figure className="data__figure">
-            <pre className="data__sample num">{EXAMPLE_ROWS.join('\n')}</pre>
-            <figcaption className="visually-hidden">Example of the accepted format, first rows</figcaption>
-          </figure>
-          <ul className="data__rules">
-            <li>
-              <code>period</code> is exactly <code>previous</code> or <code>current</code>.
-            </li>
-            <li>Every group has one row in each period; 2–50 groups.</li>
-            <li>
-              <code>successes</code> and <code>total</code> are whole numbers; successes never exceed total; total is at
-              least 1.
-            </li>
-          </ul>
           <p className="data__downloads">
             <a href="./metric-mirage-template.csv" download>
               Download the template
@@ -72,6 +57,23 @@ export function DataPanel({ activeFileName, onLoad, onReturnToExample }: Props) 
               Download a second sample
             </a>
           </p>
+          <details className="data__details">
+            <summary className="data__summary">Accepted format and rules</summary>
+            <figure className="data__figure">
+              <pre className="data__sample num">{EXAMPLE_ROWS.join('\n')}</pre>
+              <figcaption className="visually-hidden">Example of the accepted format, first rows</figcaption>
+            </figure>
+            <ul className="data__rules">
+              <li>
+                <code>period</code> is exactly <code>previous</code> or <code>current</code>.
+              </li>
+              <li>Every group has one row in each period; 2–50 groups.</li>
+              <li>
+                <code>successes</code> and <code>total</code> are whole numbers; successes never exceed total; total is
+                at least 1.
+              </li>
+            </ul>
+          </details>
         </div>
 
         <div className="data__upload">

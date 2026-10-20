@@ -66,6 +66,11 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
 
 ## Final Review
 
+- [x] Lead the reveal with the finding and a compact overall-vs-site comparison (same zero-centred scale); site table becomes the evidence beneath
+- [x] Reversal finding reworded to "Every site declined—even though the overall pass rate rose." (learner)
+- [x] Scroll keeps the headline figures in view above the finding and comparison when both fit; otherwise the investigation leads (its Overall row carries the headline)
+- [x] Composition visual: previous/current share-of-total bars, ordered by rate, with a text legend
+- [x] Scannable briefing (lead + points on screen, one paragraph copied); CSV rules behind an accessible disclosure with template links and upload kept visible
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
@@ -84,3 +89,4 @@ Activity mode:
 - Slice 2 checkpoint feedback applied — learner asked for a stronger at-a-glance reveal, headline continuity, focus return on collapse, and a less repetitive explanation. Added a neutral standfirst beside the headline (desktop read as unfinished), terracotta change pills, headline-anchored scroll on reveal, a focus-return test, and an explanation that interprets the split instead of restating the equation. No scope change.
 - Independent statistical review (bounded subagent) reproduced five defects: non-finite chart floats for very large exact denominators, a false sentence in the divergent briefing, misattributing the mix effect to one pair when 3+ shares move, "groups's" possessive, and shifts invisible at 3 decimals. All fixed with regression tests (`src/engine/review-regressions.test.ts`). The explanation now names a gainer/loser pair only when exactly two shares moved, where that pair accounts for the whole composition effect exactly.
 - Independent accessibility review (bounded subagent) found 2 medium and 7 low issues (no critical/high); all fixed: screen-reader text for rates and arrows, re-announced alerts and copy status, loaded-file status, share moved out of row headers, conditional `aria-controls`, hidden "pts". axe scans report zero WCAG A/AA violations.
+- Reveal reordered and finding reworded at the learner's final-review request: the finding now leads ("Every site declined—even though…") with a compact comparison, and the site table follows as evidence. Updated `prd.md > The Core Journey` wording accordingly. The math engine and pattern logic are unchanged.

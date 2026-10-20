@@ -29,7 +29,7 @@ describe('App — headline and reveal', () => {
     expect(button).toHaveAttribute('aria-expanded', 'true')
     expect(button).toHaveAccessibleName('Hide the investigation')
     expect(screen.getByRole('heading', { level: 2, name: 'Beneath the headline' })).toHaveFocus()
-    expect(screen.getByTestId('finding')).toHaveTextContent('Every site declined. So why did the overall pass rate rise?')
+    expect(screen.getByTestId('finding')).toHaveTextContent('Every site declined⁠—even though the overall pass rate rose.')
 
     const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1)
     expect(rows.map((r) => within(r).getByRole('rowheader').querySelector('.sites__label')?.textContent)).toEqual([
@@ -87,7 +87,9 @@ describe('App — briefing', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
     await user.click(screen.getByRole('button', { name: 'Copy briefing' }))
-    expect(writeText).toHaveBeenCalledWith(screen.getByTestId('briefing').textContent)
+    const card = screen.getByTestId('briefing')
+    const visibleSentences = [...card.querySelectorAll('p, li')].map((el) => el.textContent)
+    expect(writeText).toHaveBeenCalledWith(visibleSentences.join(' '))
     expect(screen.getByText(/^Copied\./)).toBeInTheDocument()
   })
 
@@ -99,7 +101,9 @@ describe('App — briefing', () => {
     })
     await user.click(screen.getByRole('button', { name: 'Copy briefing' }))
     expect(screen.getByText(/text is selected/)).toBeInTheDocument()
-    expect(window.getSelection()?.toString()).toBe(screen.getByTestId('briefing').textContent)
+    expect(window.getSelection()?.toString().replace(/\s+/g, ' ').trim()).toBe(
+      screen.getByTestId('briefing').textContent!.replace(/\s+/g, ' ').trim(),
+    )
   })
 })
 
@@ -130,7 +134,7 @@ describe('App — CSV upload', () => {
     const investigation = document.getElementById('investigation')!
     expect(investigation).toHaveTextContent('Harbor')
     expect(investigation.textContent).not.toMatch(/tutoring|\bsites?\b|students|pass rate/i)
-    expect(screen.getByTestId('finding')).not.toHaveTextContent('So why')
+    expect(screen.getByTestId('finding')).not.toHaveTextContent('even though')
   })
 
   test('an invalid upload shows specific errors and leaves the page unchanged', async () => {

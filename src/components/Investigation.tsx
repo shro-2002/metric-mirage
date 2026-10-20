@@ -1,11 +1,13 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 
-import { briefing, explanation, finding } from '../engine/narrative'
+import { briefingSentences, explanation, finding } from '../engine/narrative'
 import { capitalize, type Terms } from '../engine/terms'
 import type { Analysis } from '../engine/types'
 import { BriefingCard } from './BriefingCard'
+import { ChangeSummary } from './ChangeSummary'
 import { FindingCallout } from './FindingCallout'
 import { SiteComparison } from './SiteComparison'
+import { ShareShift } from './ShareShift'
 import { Waterfall } from './Waterfall'
 import './Investigation.css'
 
@@ -20,14 +22,23 @@ const step = (index: number) => ({ '--step': index }) as CSSProperties
 /** Mounted only after "Look beneath the headline"; moves focus to its heading on arrival. */
 export function Investigation({ id, analysis, terms }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const summaryRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const heading = headingRef.current
     if (!heading) return
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
     heading.focus({ preventScroll: true })
-    // Keep the headline's figures on screen so the investigation reads as what lies beneath them.
-    const anchor = document.getElementById('headline-figures') ?? heading
+    // Prefer keeping the headline's figures in view above the finding and comparison, so the
+    // discovery reads as what lies beneath the same number. If both can't fit (small screens),
+    // bring the investigation to the top; its "Overall" row still carries the headline figure.
+    const figures = document.getElementById('headline-figures')
+    const summary = summaryRef.current
+    const fitsTogether =
+      figures && summary
+        ? summary.getBoundingClientRect().bottom - figures.getBoundingClientRect().top <= window.innerHeight - 16
+        : false
+    const anchor = fitsTogether && figures ? figures : heading
     anchor.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
   }, [])
 
@@ -38,7 +49,12 @@ export function Investigation({ id, analysis, terms }: Props) {
           Beneath the headline
         </h2>
 
-        <div className="investigation__step" style={step(1)}>
+        <div className="investigation__lead" style={step(1)} ref={summaryRef}>
+          <FindingCallout text={finding(analysis, terms)} />
+          <ChangeSummary analysis={analysis} terms={terms} />
+        </div>
+
+        <div className="investigation__step" style={step(2)}>
           <h3 className="investigation__subhead">
             <span className="investigation__number" aria-hidden="true">
               1
@@ -46,10 +62,6 @@ export function Investigation({ id, analysis, terms }: Props) {
             {capitalize(terms.groups)}, one by one
           </h3>
           <SiteComparison groups={analysis.groups} terms={terms} />
-        </div>
-
-        <div className="investigation__step investigation__step--finding" style={step(2)}>
-          <FindingCallout text={finding(analysis, terms)} />
         </div>
 
         <div className="investigation__step" style={step(3)}>
@@ -60,6 +72,7 @@ export function Investigation({ id, analysis, terms }: Props) {
             Where the {analysis.display.net} points came from
           </h3>
           <Waterfall analysis={analysis} terms={terms} />
+          <ShareShift groups={analysis.groups} terms={terms} />
           <p className="investigation__explanation">{explanation(analysis, terms)}</p>
         </div>
 
@@ -70,7 +83,7 @@ export function Investigation({ id, analysis, terms }: Props) {
             </span>
             What to report
           </h3>
-          <BriefingCard text={briefing(analysis, terms)} />
+          <BriefingCard sentences={briefingSentences(analysis, terms)} />
         </div>
       </div>
     </section>

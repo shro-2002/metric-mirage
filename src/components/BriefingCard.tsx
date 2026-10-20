@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import './BriefingCard.css'
 
 type Props = {
-  text: string
+  sentences: string[]
 }
 
 type CopyState = 'idle' | 'copied' | 'manual'
@@ -16,9 +16,11 @@ const STATUS: Record<CopyState, string> = {
 
 const RESET_AFTER_MS = 4000
 
-export function BriefingCard({ text }: Props) {
+export function BriefingCard({ sentences }: Props) {
   const [state, setState] = useState<CopyState>('idle')
-  const textRef = useRef<HTMLParagraphElement>(null)
+  const textRef = useRef<HTMLDivElement>(null)
+  const text = sentences.join(' ') // what gets copied: one paragraph, same words as shown
+  const [lead, ...rest] = sentences
 
   // A new briefing (e.g. after uploading data) starts with no stale "Copied" message.
   useEffect(() => setState('idle'), [text])
@@ -55,9 +57,14 @@ export function BriefingCard({ text }: Props) {
   return (
     <div className="briefing">
       <p className="briefing__label">For your report</p>
-      <p ref={textRef} className="briefing__text" data-testid="briefing">
-        {text}
-      </p>
+      <div ref={textRef} className="briefing__text" data-testid="briefing" data-copy={text}>
+        <p className="briefing__lead">{lead}</p>
+        <ul className="briefing__points">
+          {rest.map((sentence) => (
+            <li key={sentence}>{sentence}</li>
+          ))}
+        </ul>
+      </div>
       <div className="briefing__actions">
         <button type="button" className="briefing__copy" onClick={handleCopy}>
           Copy briefing

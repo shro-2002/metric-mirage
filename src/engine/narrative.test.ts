@@ -45,7 +45,7 @@ describe('headline', () => {
 describe('finding', () => {
   test('flagship reversal line, exactly as in the PRD', () => {
     expect(finding(analyze(tutoringExample), EXAMPLE_TERMS)).toBe(
-      'Every site declined. So why did the overall pass rate rise?',
+      'Every site declined—even though the overall pass rate rose.',
     )
   })
 
@@ -54,8 +54,8 @@ describe('finding', () => {
     expect(a.pattern).toBe(pattern)
     const text = finding(a, UPLOAD_TERMS)
     expect(text).not.toMatch(TUTORING_WORDS)
-    if (pattern === 'reversal') expect(text).toMatch(/So why did/)
-    else expect(text).not.toMatch(/So why did/)
+    if (pattern === 'reversal') expect(text).toMatch(/even though the overall/)
+    else expect(text).not.toMatch(/even though the overall/)
     if (pattern === 'mixed' || pattern === 'divergent') expect(text).toMatch(/not a complete reversal/)
   })
 

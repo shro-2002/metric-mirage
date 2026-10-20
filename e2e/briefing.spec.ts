@@ -6,7 +6,7 @@ test('Copy briefing puts the exact on-screen briefing on the clipboard', async (
   await page.goto('/')
   await page.getByRole('button', { name: 'Look beneath the headline' }).click()
 
-  const shown = await page.getByTestId('briefing').textContent()
+  const shown = (await page.getByTestId('briefing').locator('p, li').allTextContents()).join(' ')
   expect(shown).toContain('the overall pass rate rose from 62.5% to 66.5% (+4.0 percentage points)')
 
   await page.getByRole('button', { name: 'Copy briefing' }).click()

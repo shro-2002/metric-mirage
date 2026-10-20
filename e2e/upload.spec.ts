@@ -9,7 +9,7 @@ test('upload the second sample, see an honest non-reversal result, then return t
   await expect(page.getByText('Your file: sample-consistent.csv')).toBeVisible()
   await page.getByRole('button', { name: 'Look beneath the headline' }).click()
   await expect(page.getByTestId('finding')).toContainText('point the same way')
-  await expect(page.getByTestId('finding')).not.toContainText('So why')
+  await expect(page.getByTestId('finding')).not.toContainText('even though')
   await page.waitForTimeout(1200)
   await page.screenshot({ path: `test-results/screens/${testInfo.project.name}-3-upload.png`, fullPage: true })
 

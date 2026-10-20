@@ -54,7 +54,7 @@ export const finding = (analysis: Analysis, terms: Terms): string => {
   switch (analysis.pattern) {
     case 'reversal': {
       const groupsDirection = overall === 'up' ? 'down' : 'up'
-      return `${allGroups(t.total, terms)} ${groupMoved(groupsDirection)}. So why did the overall ${m} ${overall === 'up' ? 'rise' : 'fall'}?`
+      return `${allGroups(t.total, terms)} ${groupMoved(groupsDirection)}—even though the overall ${m} ${overall === 'up' ? 'rose' : 'fell'}.`
     }
     case 'consistent': {
       if (t.unchanged === 0) {
@@ -198,6 +198,9 @@ export const explanation = (analysis: Analysis, terms: Terms): string => {
   return sentences.join(' ')
 }
 
+/** Deterministic, copyable management briefing. Every figure comes from `analysis.display`. */
+export const briefing = (analysis: Analysis, terms: Terms): string => briefingSentences(analysis, terms).join(' ')
+
 const listGroups = (groups: GroupResult[]): string => {
   // When rounding makes both rates look identical, include the signed change so "rose" is visible.
   const items = groups.map((g) =>
@@ -264,8 +267,8 @@ const interpretationSentence = (analysis: Analysis, terms: Terms): string => {
   }
 }
 
-/** Deterministic, copyable management briefing. Every figure comes from `analysis.display`. */
-export const briefing = (analysis: Analysis, terms: Terms): string => {
+/** The briefing as separate sentences: shown as a scannable list, copied as one paragraph. */
+export const briefingSentences = (analysis: Analysis, terms: Terms): string[] => {
   const { display, overall } = analysis
   const m = terms.metric
   const opening =
@@ -280,5 +283,5 @@ export const briefing = (analysis: Analysis, terms: Terms): string => {
     'This is a descriptive analysis of two periods; it does not establish causes or statistical significance.',
   ]
   if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
-  return sentences.join(' ')
+  return sentences
 }
