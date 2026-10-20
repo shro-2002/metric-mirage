@@ -8,6 +8,8 @@
   --improve: #1f6f6b;
   --decline: #b4472b;
   --composition: #3f4a9a;
+  --improve-strong: #1a625e; /* text on --improve-wash, 6.0:1 */
+  --decline-strong: #a13e25; /* text on --decline-wash, 5.3:1 */
   --improve-wash: #e3eeec;
   --decline-wash: #f6e4dd;
   --composition-wash: #e6e7f3;

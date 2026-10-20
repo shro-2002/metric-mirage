@@ -63,4 +63,13 @@ describe('App — headline and reveal', () => {
     await user.keyboard('{Enter}')
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
+
+  test('collapsing returns focus to the reveal control', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Look beneath the headline' }))
+    await user.click(screen.getByRole('button', { name: 'Hide the investigation' }))
+    expect(screen.getByRole('button', { name: 'Look beneath the headline' })).toHaveFocus()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
 })

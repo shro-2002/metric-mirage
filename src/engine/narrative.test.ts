@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest'
 
 import { tutoringExample } from '../data/tutoring-example'
 import { analyze } from './analyze'
-import { MINUS } from './format'
 import { explanation, finding, headline } from './narrative'
 import { EXAMPLE_TERMS, UPLOAD_TERMS } from './terms'
 import type { Dataset, Pattern } from './types'
@@ -74,12 +73,14 @@ describe('finding', () => {
 })
 
 describe('explanation', () => {
-  test('flagship explains the mix shift in plain English with on-screen numbers', () => {
-    expect(explanation(analyze(tutoringExample), EXAMPLE_TERMS)).toBe(
-      `Changes within sites moved the overall pass rate by ${MINUS}2.0 points; the shift in the mix of sites moved it by +6.0 points (${MINUS}2.0 + 6.0 = +4.0). ` +
-        "North's share of students grew from 25.0% to 40.0%, while West's fell from 25.0% to 10.0%. " +
-        "North has the higher pass rate (80.0% → 78.0%, versus 40.0% → 38.0% at West), so the shift toward it raised the overall pass rate, even though every site's own pass rate fell.",
+  test('flagship explains what the equation means, without repeating it', () => {
+    const text = explanation(analyze(tutoringExample), EXAMPLE_TERMS)
+    expect(text).toBe(
+      "Every site's own pass rate fell, which on its own pulled the overall rate down by 2.0 points. " +
+        "Meanwhile, North's share of students grew from 25.0% to 40.0%, while West's fell from 25.0% to 10.0%. " +
+        'North has the higher pass rate of the two, so with more students there, the shift in mix added 6.0 points, more than offsetting the change within the sites.',
     )
+    expect(text).not.toContain('=')
   })
 
   test.each(Object.entries(CASES))('%s: no tutoring words and no causal claims with upload terms', (_, data) => {
@@ -90,5 +91,25 @@ describe('explanation', () => {
 
   test('unchanged mix says so instead of inventing a shift', () => {
     expect(explanation(analyze(CASES.consistent), UPLOAD_TERMS)).toMatch(/mix of groups did not change/)
+  })
+})
+
+describe('explanation — offset wording is exact', () => {
+  const two = (rows: [number, number, number, number][]): Dataset => ({
+    groups: rows.map(([s0, t0, s1, t1], i) => ({
+      name: `G${i}`,
+      previous: { successes: s0, total: t0 },
+      current: { successes: s1, total: t1 },
+    })),
+  })
+
+  test('mix smaller than the within-group change → "offsetting part of"', () => {
+    // both groups fall 10 points; a modest shift toward the higher group
+    const text = explanation(analyze(two([[80, 100, 77, 110], [40, 100, 27, 90]])), UPLOAD_TERMS)
+    expect(text).toMatch(/offsetting part of the change within the groups/)
+  })
+
+  test('flagship-style: mix larger → "more than offsetting"', () => {
+    expect(explanation(analyze(tutoringExample), EXAMPLE_TERMS)).toMatch(/more than offsetting/)
   })
 })

@@ -92,41 +92,68 @@ const pickExtreme = (groups: GroupResult[], wanted: 1 | -1): GroupResult | undef
       return sign(diff) === wanted ? g : best
     }, undefined)
 
-/** Plain-English explanation of the rate/mix split, built only from calculated findings. */
-export const explanation = (analysis: Analysis, terms: Terms): string => {
-  const { display, decomposition, pattern, groups } = analysis
+const unsigned = (text: string): string => text.replace(/^[+\u2212]/, '')
+
+/** How the within-group changes moved the overall rate, in words (no equation). */
+const withinSentence = (analysis: Analysis, terms: Terms): string => {
+  const { display, decomposition, groups } = analysis
   const m = terms.metric
-  const sentences: string[] = [
-    `Changes within ${terms.groups} moved the overall ${m} by ${display.rateEffect} points; the shift in the mix of ${terms.groups} moved it by ${display.compositionEffect} points (${display.equation}).`,
-  ]
-  if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
+  const rateSign = sign(decomposition.rateEffect)
+  const t = tally(analysis)
+  if (t.unchanged === t.total) return `No ${terms.group}'s own ${m} changed.`
+  if (rateSign === 0) return `Within the ${terms.groups}, the rises and falls offset each other exactly.`
+  const allSame = t.unchanged === 0 && (t.up === t.total || t.down === t.total)
+  const lead = allSame
+    ? `${allGroups(groups.length, terms)}'s own ${m} ${moved(groups[0]!.direction)}`
+    : `Weighted by size, the changes within the ${terms.groups}`
+  return `${lead}, which on its own ${rateSign < 0 ? 'pulled the overall rate down' : 'pushed the overall rate up'} by ${unsigned(display.rateEffect)} points.`
+}
+
+/**
+ * Plain-English meaning of the rate/mix split, built only from calculated findings.
+ * The equation itself is shown separately; this says what it means.
+ */
+export const explanation = (analysis: Analysis, terms: Terms): string => {
+  const { display, decomposition, groups } = analysis
+  const m = terms.metric
+  const sentences: string[] = [withinSentence(analysis, terms)]
 
   const gainer = pickExtreme(groups, 1)
   const loser = pickExtreme(groups, -1)
+  const rateSign = sign(decomposition.rateEffect)
   const compositionSign = sign(decomposition.compositionEffect)
+  const mixAmount = unsigned(display.compositionEffect)
 
   if (!gainer || !loser) {
     sentences.push(`The mix of ${terms.groups} did not change, so the whole change comes from within the ${terms.groups}.`)
-    return sentences.join(' ')
-  }
-
-  sentences.push(
-    `${gainer.name}'s share of ${terms.shareOf} grew from ${gainer.display.previousShare} to ${gainer.display.currentShare}, while ${loser.name}'s fell from ${loser.display.previousShare} to ${loser.display.currentShare}.`,
-  )
-
-  const gainerHigher = sign(sub(averageRate(gainer), averageRate(loser)))
-  const reversalClause =
-    pattern === 'reversal' ? `, even though every ${terms.group}'s own ${m} ${moved(analysis.groups[0]!.direction)}` : ''
-  const comparison = `(${gainer.display.previousRate} → ${gainer.display.currentRate}, versus ${loser.display.previousRate} → ${loser.display.currentRate} at ${loser.name})`
-
-  if (gainerHigher > 0 && compositionSign > 0) {
-    sentences.push(`${gainer.name} has the higher ${m} ${comparison}, so the shift toward it raised the overall ${m}${reversalClause}.`)
-  } else if (gainerHigher < 0 && compositionSign < 0) {
-    sentences.push(`${gainer.name} has the lower ${m} ${comparison}, so the shift toward it lowered the overall ${m}${reversalClause}.`)
-  } else if (compositionSign === 0) {
-    sentences.push(`Taken together, these shifts in mix left the overall ${m} unchanged.`)
   } else {
-    sentences.push(`Taken together, the shifts in mix ${compositionSign > 0 ? 'raised' : 'lowered'} the overall ${m}${reversalClause}.`)
+    sentences.push(
+      `Meanwhile, ${gainer.name}'s share of ${terms.shareOf} grew from ${gainer.display.previousShare} to ${gainer.display.currentShare}, while ${loser.name}'s fell from ${loser.display.previousShare} to ${loser.display.currentShare}.`,
+    )
+    const gainerHigher = sign(sub(averageRate(gainer), averageRate(loser)))
+    // With opposite signs, sign(rate + composition) tells which part is larger, exactly.
+    const netSign = sign(add(decomposition.rateEffect, decomposition.compositionEffect))
+    const offsets =
+      rateSign === 0 || compositionSign === 0 || rateSign === compositionSign
+        ? ''
+        : netSign === compositionSign
+          ? `, more than offsetting the change within the ${terms.groups}`
+          : netSign === 0
+            ? `, exactly offsetting the change within the ${terms.groups}`
+            : `, offsetting part of the change within the ${terms.groups}`
+    const verb = compositionSign > 0 ? 'added' : 'took away'
+    if (compositionSign === 0) {
+      sentences.push(`Taken together, these shifts in mix left the overall ${m} unchanged.`)
+    } else if ((gainerHigher > 0 && compositionSign > 0) || (gainerHigher < 0 && compositionSign < 0)) {
+      const level = gainerHigher > 0 ? 'higher' : 'lower'
+      sentences.push(
+        `${gainer.name} has the ${level} ${m} of the two, so with ${terms.moreOf} there, the shift in mix ${verb} ${mixAmount} points${offsets}.`,
+      )
+    } else {
+      sentences.push(`Taken together, the shifts in mix ${verb} ${mixAmount} points${offsets}.`)
+    }
   }
+
+  if (display.approximate) sentences.push('Figures are rounded and may not sum exactly.')
   return sentences.join(' ')
 }

@@ -25,7 +25,9 @@ export function Investigation({ id, analysis, terms }: Props) {
     if (!heading) return
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
     heading.focus({ preventScroll: true })
-    heading.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    // Keep the headline's figures on screen so the investigation reads as what lies beneath them.
+    const anchor = document.getElementById('headline-figures') ?? heading
+    anchor.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
   }, [])
 
   return (

@@ -122,9 +122,12 @@
 
 .change {
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  line-height: 1.15;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 0.3rem 0.6rem;
+  line-height: 1.1;
+  border-radius: 2px;
+  white-space: nowrap;
 }
 
 .change__glyph {
@@ -146,15 +149,26 @@
 }
 
 .change--up {
-  color: var(--improve);
+  color: var(--improve-strong);
+  background: var(--improve-wash);
 }
 
 .change--down {
-  color: var(--decline);
+  color: var(--decline-strong);
+  background: var(--decline-wash);
 }
 
 .change--unchanged {
   color: var(--muted);
+  background: var(--paper);
+}
+
+@media (max-width: 40rem) {
+  .change {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+  }
 }
 
 .sites__share-values {

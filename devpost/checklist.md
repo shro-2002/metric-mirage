@@ -61,7 +61,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 2 (the reveal), so the signature moment and visual direction can still shape slices 3–5
+- [x] Early usable behavior explored — after slice 2 (the reveal), so the signature moment and visual direction can still shape slices 3–5
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -81,3 +81,4 @@ Reflection:
 Activity mode:
 
 ## Revisions
+- Slice 2 checkpoint feedback applied — learner asked for a stronger at-a-glance reveal, headline continuity, focus return on collapse, and a less repetitive explanation. Added a neutral standfirst beside the headline (desktop read as unfinished), terracotta change pills, headline-anchored scroll on reveal, a focus-return test, and an explanation that interprets the split instead of restating the equation. No scope change.

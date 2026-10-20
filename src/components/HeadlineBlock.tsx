@@ -16,12 +16,17 @@ export function HeadlineBlock({ analysis, terms, sourceLabel, isRevealed, invest
   const { display, overall } = analysis
   return (
     <section className="headline page" aria-labelledby="headline-title">
-      <p className="headline__eyebrow">{terms.eyebrow}</p>
-      <h1 id="headline-title" className="headline__title">
-        {headline(analysis, terms)}
-      </h1>
+      <div className="headline__top">
+        <div>
+          <p className="headline__eyebrow">{terms.eyebrow}</p>
+          <h1 id="headline-title" className="headline__title">
+            {headline(analysis, terms)}
+          </h1>
+        </div>
+        <p className="headline__dek">{terms.dek}</p>
+      </div>
 
-      <div className="headline__figures">
+      <div className="headline__figures" id="headline-figures">
         <p className="headline__rates num" aria-label={`Overall ${terms.metric}: ${display.previousRate} in the previous period, ${display.currentRate} in the current period`}>
           <span className="headline__rate">{display.previousRate}</span>
           <span className="headline__arrow" aria-hidden="true">→</span>
