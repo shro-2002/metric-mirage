@@ -39,7 +39,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
   Learner check: Click **Copy briefing**, paste it into any document, and judge whether you'd send it to a manager as-is.
   Commit: `feat: add deterministic copyable management briefing`
 
-- [ ] **4. Analyze your own CSV**
+- [x] **4. Analyze your own CSV**
   Becomes usable: The secondary "Analyze your own CSV" section: format explanation, template and second-sample downloads, file upload. A valid file replaces the example (generic "success rate / group" wording) and runs the same headline → reveal → briefing journey with honest wording for whatever the data shows. An invalid file shows specific errors naming rows and values and keeps the current view. **Return to the example** restores the flagship.
   Why now: Proves the analysis is reusable rather than a canned demo, which completes `What We're Building`. Depends on the engine and narrative from slices 1–3, which are already proven.
   PRD ref: `prd.md > CSV upload`, `prd.md > Honest analysis for every valid dataset`, `prd.md > States and Boundaries`

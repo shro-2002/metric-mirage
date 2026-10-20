@@ -8,12 +8,14 @@ import type { Dataset } from './engine/types'
 export type Source = { kind: 'example' } | { kind: 'upload'; fileName: string; dataset: Dataset }
 
 /**
- * The page's only state: where the data came from, and whether the investigation
- * is open. Everything else (analysis, wording) is derived, never stored.
+ * The page's only state: where the data came from, whether the investigation is
+ * open, and a counter of data switches (used to move focus to the new headline).
+ * Everything else (analysis, wording) is derived, never stored.
  */
 export const useInvestigation = () => {
   const [source, setSource] = useState<Source>({ kind: 'example' })
   const [revealed, setRevealed] = useState(false)
+  const [version, setVersion] = useState(0) // bumps on every data switch, even to a same-named file
 
   const dataset = source.kind === 'example' ? tutoringExample : source.dataset
   const analysis = useMemo(() => analyze(dataset), [dataset])
@@ -21,6 +23,7 @@ export const useInvestigation = () => {
 
   return {
     source,
+    version,
     analysis,
     terms,
     revealed,
@@ -28,10 +31,12 @@ export const useInvestigation = () => {
     loadUpload: (fileName: string, uploaded: Dataset) => {
       setSource({ kind: 'upload', fileName, dataset: uploaded })
       setRevealed(false)
+      setVersion((v) => v + 1)
     },
     returnToExample: () => {
       setSource({ kind: 'example' })
       setRevealed(false)
+      setVersion((v) => v + 1)
     },
   }
 }

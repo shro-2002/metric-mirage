@@ -1,0 +1,9 @@
+period,group,successes,total
+previous,North,200,250
+previous,East,175,250
+previous,South,150,250
+previous,West,100,250
+current,North,312,400
+current,East,170,250
+current,South,145,250
+current,West,38,100

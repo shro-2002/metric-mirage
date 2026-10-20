@@ -14,6 +14,7 @@ import {
   formatValue,
   partsReconcile,
   ratesReconcile,
+  shareDecimals,
   toPoints,
   trimTrailingZeros,
 } from './format'
@@ -72,6 +73,7 @@ export const analyze = (dataset: Dataset): Analysis => {
   const groups: GroupResult[] = exactGroups.map(({ group, r0, r1, w0, w1 }) => {
     const change = sub(r1, r0)
     const { decimals, approximate } = choosePrecision((d) => ratesReconcile(r0, r1, change, d), [change])
+    const shareD = shareDecimals(w0, w1)
     return {
       name: group.name,
       previous: { ...group.previous, rate: r0, share: w0 },
@@ -84,8 +86,8 @@ export const analyze = (dataset: Dataset): Analysis => {
         previousRate: formatPercent(r0, decimals),
         currentRate: formatPercent(r1, decimals),
         change: formatValue(toPoints(change), decimals, true),
-        previousShare: formatPercent(w0, 1),
-        currentShare: formatPercent(w1, 1),
+        previousShare: formatPercent(w0, shareD),
+        currentShare: formatPercent(w1, shareD),
       },
     }
   })

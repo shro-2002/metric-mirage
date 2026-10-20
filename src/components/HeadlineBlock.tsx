@@ -1,9 +1,13 @@
+import { useEffect, useRef } from 'react'
+
 import { headline } from '../engine/narrative'
 import type { Terms } from '../engine/terms'
 import type { Analysis } from '../engine/types'
 import './HeadlineBlock.css'
 
 type Props = {
+  /** Increments when the data source changes; focus then moves to the new headline. */
+  sourceVersion: number
   analysis: Analysis
   terms: Terms
   sourceLabel: string
@@ -12,14 +16,21 @@ type Props = {
   onToggle: () => void
 }
 
-export function HeadlineBlock({ analysis, terms, sourceLabel, isRevealed, investigationId, onToggle }: Props) {
+export function HeadlineBlock({ sourceVersion, analysis, terms, sourceLabel, isRevealed, investigationId, onToggle }: Props) {
   const { display, overall } = analysis
+  const titleRef = useRef<HTMLHeadingElement>(null)
+
+  useEffect(() => {
+    if (sourceVersion === 0) return
+    titleRef.current?.focus({ preventScroll: true })
+    titleRef.current?.scrollIntoView?.({ block: 'start' })
+  }, [sourceVersion])
   return (
     <section className="headline page" aria-labelledby="headline-title">
       <div className="headline__top">
         <div>
           <p className="headline__eyebrow">{terms.eyebrow}</p>
-          <h1 id="headline-title" className="headline__title">
+          <h1 id="headline-title" ref={titleRef} tabIndex={-1} className="headline__title">
             {headline(analysis, terms)}
           </h1>
         </div>
@@ -54,6 +65,9 @@ export function HeadlineBlock({ analysis, terms, sourceLabel, isRevealed, invest
           {isRevealed ? '↑' : '↓'}
         </span>
       </button>
+      <p className="headline__alt">
+        or <a href="#your-data">analyze your own CSV</a>
+      </p>
     </section>
   )
 }

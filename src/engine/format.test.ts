@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { choosePrecision, formatEquation, formatValue, MINUS, partsReconcile, trimTrailingZeros } from './format'
+import { choosePrecision, formatEquation, formatValue, MINUS, partsReconcile, shareDecimals, trimTrailingZeros } from './format'
 import { rational } from './rational'
 
 describe('formatValue', () => {
@@ -70,5 +70,15 @@ describe('formatEquation', () => {
     expect(formatEquation(rational(3, 100), rational(-1, 100), rational(2, 100), 1, true)).toBe(
       `+3.0 ${MINUS} 1.0 ≈ +2.0`,
     )
+  })
+})
+
+describe('shareDecimals', () => {
+  test('unchanged share stays at 1 decimal', () => {
+    expect(shareDecimals(rational(1, 4), rational(1, 4))).toBe(1)
+  })
+  test('a tiny real change gets enough decimals to show it', () => {
+    // 31.25% → 31.27% (Mill in the second sample)
+    expect(shareDecimals(rational(500, 1600), rational(505, 1615))).toBe(2)
   })
 })

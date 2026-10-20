@@ -2,7 +2,7 @@
 // Underlying exact values are never altered; only the number of displayed
 // decimals adapts (1 → 3) so that rounded figures reconcile.
 
-import { mul, rational, roundScaled, sign, type Rational } from './rational'
+import { mul, rational, roundScaled, sign, sub, type Rational } from './rational'
 
 export const MINUS = '−'
 export const MIN_DECIMALS = 1
@@ -63,6 +63,15 @@ export const choosePrecision = (
     if (reconciles(d) && visibleWhenNonzero(shown.map(toPoints), d)) return { decimals: d, approximate: false }
   }
   return { decimals: MAX_DECIMALS, approximate: !reconciles(MAX_DECIMALS) }
+}
+
+/** Fewest decimals (1–3) at which a changed share no longer looks unchanged. */
+export const shareDecimals = (previous: Rational, current: Rational): number => {
+  if (sign(sub(current, previous)) === 0) return MIN_DECIMALS
+  for (let d = MIN_DECIMALS; d <= MAX_DECIMALS; d++) {
+    if (roundScaled(toPoints(previous), d) !== roundScaled(toPoints(current), d)) return d
+  }
+  return MAX_DECIMALS
 }
 
 /** "−2.0 + 6.0 = +4.0", or "≈" when the rounded figures cannot reconcile. */

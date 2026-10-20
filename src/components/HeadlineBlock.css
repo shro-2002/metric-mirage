@@ -37,7 +37,7 @@
 
 .headline__title {
   margin-top: var(--space-4);
-  max-width: 14ch;
+  max-width: 17ch;
   font-family: var(--font-serif);
   font-size: var(--text-hero);
   font-weight: 500;
@@ -83,6 +83,10 @@
   margin-top: var(--space-2);
   font-size: var(--text-sm);
   color: var(--muted);
+}
+
+.headline__title {
+  scroll-margin-top: var(--space-6);
 }
 
 .headline__source {
@@ -140,4 +144,26 @@
   color: var(--paper);
   background: var(--ink);
   border-color: var(--ink);
+}
+
+.headline__title:focus {
+  outline: none;
+}
+
+.headline__title:focus-visible {
+  outline: 3px solid var(--composition);
+}
+
+.headline__alt {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.headline__alt a {
+  display: inline-block;
+  min-height: 44px;
+  line-height: 44px;
+  font-weight: 600;
+  color: var(--ink);
 }

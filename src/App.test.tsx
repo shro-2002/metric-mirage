@@ -102,3 +102,55 @@ describe('App — briefing', () => {
     expect(window.getSelection()?.toString()).toBe(screen.getByTestId('briefing').textContent)
   })
 })
+
+describe('App — CSV upload', () => {
+  const SAMPLE = [
+    'period,group,successes,total',
+    'previous,Harbor,410,600',
+    'previous,Mill,300,500',
+    'current,Harbor,452,620',
+    'current,Mill,331,505',
+  ].join('\n')
+
+  const upload = async (user: ReturnType<typeof userEvent.setup>, name: string, content: string) => {
+    await user.upload(screen.getByLabelText('Choose a CSV file'), new File([content], name, { type: 'text/csv' }))
+  }
+
+  test('a valid upload replaces the example with generic wording and focuses the new headline', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await upload(user, 'my-data.csv', SAMPLE)
+
+    const h1 = await screen.findByRole('heading', { level: 1, name: /^Success rates are up/ })
+    expect(h1).toHaveFocus()
+    expect(screen.getByText('Your file: my-data.csv')).toBeInTheDocument()
+    expect(screen.queryByText('Fictional example data')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Look beneath the headline' }))
+    const investigation = document.getElementById('investigation')!
+    expect(investigation).toHaveTextContent('Harbor')
+    expect(investigation.textContent).not.toMatch(/tutoring|\bsites?\b|students|pass rate/i)
+    expect(screen.getByTestId('finding')).not.toHaveTextContent('So why')
+  })
+
+  test('an invalid upload shows specific errors and leaves the page unchanged', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await upload(user, 'bad.csv', SAMPLE.replace('previous,Harbor', 'Previous,Harbor'))
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('bad.csv couldn\'t be analyzed')
+    expect(alert).toHaveTextContent('Row 2: period is "Previous". Use exactly "previous" or "current" (lowercase).')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Pass rates are up 4 points.')
+  })
+
+  test('return to the example restores the flagship', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await upload(user, 'my-data.csv', SAMPLE)
+    await screen.findByText('Your file: my-data.csv')
+    await user.click(screen.getByRole('button', { name: 'Return to the example' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Pass rates are up 4 points.')
+    expect(screen.getByText('Fictional example data')).toBeInTheDocument()
+  })
+})

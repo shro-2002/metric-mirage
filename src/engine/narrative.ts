@@ -103,10 +103,10 @@ const withinSentence = (analysis: Analysis, terms: Terms): string => {
   if (t.unchanged === t.total) return `No ${terms.group}'s own ${m} changed.`
   if (rateSign === 0) return `Within the ${terms.groups}, the rises and falls offset each other exactly.`
   const allSame = t.unchanged === 0 && (t.up === t.total || t.down === t.total)
-  const lead = allSame
-    ? `${allGroups(groups.length, terms)}'s own ${m} ${moved(groups[0]!.direction)}`
-    : `Weighted by size, the changes within the ${terms.groups}`
-  return `${lead}, which on its own ${rateSign < 0 ? 'pulled the overall rate down' : 'pushed the overall rate up'} by ${unsigned(display.rateEffect)} points.`
+  const effect = `${rateSign < 0 ? 'pulled the overall rate down' : 'pushed the overall rate up'} by ${unsigned(display.rateEffect)} points`
+  return allSame
+    ? `${allGroups(groups.length, terms)}'s own ${m} ${moved(groups[0]!.direction)}, which on its own ${effect}.`
+    : `Weighted by size, the changes within the ${terms.groups} on their own ${effect}.`
 }
 
 /**
