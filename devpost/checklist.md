@@ -62,7 +62,7 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — after slice 2 (the reveal), so the signature moment and visual direction can still shape slices 3–5
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed — learner ran the production build (`npm run preview`, port 4173) and passed six acceptance checks: flagship reveal, rounding fixture, copy briefing, honest second sample, invalid CSV, mobile and keyboard
 
 ## Final Review
 
@@ -72,19 +72,19 @@ Build mode: fast (chosen by learner; pause after slice 2 for design feedback and
 - [x] Composition visual: previous/current share-of-total bars, ordered by rate, with a text legend
 - [x] Scannable briefing (lead + points on screen, one paragraph copied); CSV rules behind an accessible disclosure with template links and upload kept visible
 - [x] Stakes and "why" for judges: fictional decision context in the standfirst; a plain "two forces" sentence (figures colored to match the chart) and a pattern-honest "what this means for the decision" note in the reveal
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship (explicit approval: "YES — Metric Mirage is ready to ship. I formally approve the proof of concept." Release candidate `db368e4`)
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence:
-Route and stops:
-Edit outcome:
-Reflection:
-Activity mode:
+Activity and evidence: Focused alternative tied to the learner's goal (plan-first, spec-driven development): traced the "never nudge a rounded number" decision from `spec.md > Display plan and formatting` to `src/engine/format.ts > choosePrecision` to the property test in `src/engine/analyze.test.ts`; learner uploaded `tests/fixtures/rounding-demo.csv` and saw `+10.55 − 7.11 = +3.44` (would be the contradictory `+10.6 − 7.1 = +3.4` at one decimal).
+Route and stops: `devpost/spec.md` (Display plan and formatting) → `src/engine/format.ts` (`choosePrecision`, `partsReconcile`, `ratesReconcile`; `roundScaled` in `rational.ts`) → `src/engine/analyze.test.ts` ("displayed equation always reconciles unless explicitly marked approximate"). Fixture pinned in `src/csv/validate.test.ts`.
+Edit outcome: Not applicable — hands-on verification with a fixture instead of a code edit.
+Reflection: Offered and answered (recorded only in the ignored learner profile).
+Activity mode: Live app (production preview) plus source references; focused alternative.
 
 ## Revisions
 - Slice 2 checkpoint feedback applied — learner asked for a stronger at-a-glance reveal, headline continuity, focus return on collapse, and a less repetitive explanation. Added a neutral standfirst beside the headline (desktop read as unfinished), terracotta change pills, headline-anchored scroll on reveal, a focus-return test, and an explanation that interprets the split instead of restating the equation. No scope change.
