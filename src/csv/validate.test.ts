@@ -140,3 +140,13 @@ describe('tests/fixtures/rounding-demo.csv', () => {
     expect([display.previousRate, display.currentRate]).toEqual(['44.29%', '47.73%'])
   })
 })
+
+describe('tests/fixtures/invalid-period.csv', () => {
+  test('is rejected with exactly one row-specific message', () => {
+    const result = parseCsvText(readFileSync(resolve(__dirname, '../../tests/fixtures/invalid-period.csv'), 'utf8'))
+    expect(result).toEqual({
+      ok: false,
+      errors: [{ row: 2, message: 'Row 2: period is "Previous". Use exactly "previous" or "current" (lowercase).' }],
+    })
+  })
+})

@@ -1,0 +1,9 @@
+period,group,successes,total
+Previous,Harbor,410,600
+previous,Mill,300,500
+previous,Ridge,150,300
+previous,Summit,90,200
+current,Harbor,452,620
+current,Mill,331,505
+current,Ridge,165,290
+current,Summit,90,200
