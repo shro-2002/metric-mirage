@@ -1,0 +1,5 @@
+period,group,successes,total
+previous,A,1,20
+previous,B,30,50
+current,A,9,38
+current,B,33,50

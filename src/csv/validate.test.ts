@@ -127,3 +127,16 @@ describe('error reporting stays focused', () => {
     }
   })
 })
+
+describe('tests/fixtures/rounding-demo.csv', () => {
+  test('needs 2 decimals: at 1 decimal the equation would read +10.6 − 7.1 = +3.4, which does not add up', () => {
+    const result = parseCsvText(readFileSync(resolve(__dirname, '../../tests/fixtures/rounding-demo.csv'), 'utf8'))
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const { display } = analyze(result.dataset)
+    expect(display.decimals).toBe(2)
+    expect(display.approximate).toBe(false)
+    expect(display.equation).toBe('+10.55 − 7.11 = +3.44')
+    expect([display.previousRate, display.currentRate]).toEqual(['44.29%', '47.73%'])
+  })
+})
