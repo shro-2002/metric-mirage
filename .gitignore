@@ -26,3 +26,6 @@ test-results/
 blob-report/
 *.tsbuildinfo
 *.log
+
+# Local demo-video production (large media; not part of the app)
+/video/
