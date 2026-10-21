@@ -64,6 +64,8 @@ Dependencies deliberately not added: router, state library, chart library, CSS f
 - **Submission requirements:** a short demo video and a public GitHub repository are required and are separate from deployment.
 - **Deployment (optional, agreed preference):** GitHub Pages via a GitHub Actions workflow that builds with Vite and publishes `dist/`. `vite.config.ts` uses `base: './'` so the site works at any repository path. Free; needs the repo to be public and Pages enabled. Exact Actions versions to be checked at `6-ship`.
 
+- **Published (6-ship):** public repository https://github.com/shro-2002/metric-mirage · live site https://shro-2002.github.io/metric-mirage/ (deployed by `.github/workflows/deploy.yml` on every push to `main`; tests run before each deploy). Demo video URL: to be added by the learner.
+
 ## Look and Feel
 
 Carried from `prd.md > Look and Feel`; no new design decisions.
