@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('Copy briefing puts the exact on-screen briefing on the clipboard', async ({ browser }) => {
   const context = await browser.newContext({ permissions: ['clipboard-read', 'clipboard-write'] })
   const page = await context.newPage()
-  await page.goto('/')
+  await page.goto('./')
   await page.getByRole('button', { name: 'Look beneath the headline' }).click()
 
   const shown = (await page.getByTestId('briefing').locator('p, li').allTextContents()).join(' ')

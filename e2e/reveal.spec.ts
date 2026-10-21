@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('headline → reveal: sites, finding and decomposition', async ({ page }, testInfo) => {
-  await page.goto('/')
+  await page.goto('./')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Pass rates are up 4 points.')
   await expect(page.getByTestId('finding')).toHaveCount(0)
   await page.screenshot({ path: `test-results/screens/${testInfo.project.name}-1-headline.png`, fullPage: true })
@@ -27,7 +27,7 @@ test('headline → reveal: sites, finding and decomposition', async ({ page }, t
 test('reduced motion: everything is visible immediately', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' })
   const page = await context.newPage()
-  await page.goto('/')
+  await page.goto('./')
   await page.getByRole('button', { name: 'Look beneath the headline' }).click()
   const opacity = await page.getByTestId('finding').evaluate((el) => getComputedStyle(el.parentElement!).opacity)
   expect(opacity).toBe('1')

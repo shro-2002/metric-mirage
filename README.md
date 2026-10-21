@@ -1,5 +1,7 @@
 # Metric Mirage
 
+**Live demo: https://shro-2002.github.io/metric-mirage/** (no sign-in; runs entirely in your browser)
+
 **Before you report that number.** A browser tool that shows whether a rising (or falling) overall success rate hides what happened inside each group, splits the change into *within-group performance* and *shifts in mix*, and gives you a briefing you can paste into a report.
 
 The flagship example is a fictional tutoring network whose pass rate rose from 62.5% to 66.5% (+4.0 points) while **every one of its four sites declined by 2.0 points**. The overall rise is real; it comes from more students being at the higher-performing site. Metric Mirage makes that visible in one click:
@@ -69,7 +71,7 @@ npm run typecheck   # strict TypeScript
 npm run test:e2e    # browser tests on desktop and mobile (Playwright + axe)
 ```
 
-The first `test:e2e` run may need `npx playwright install chromium`.
+The first `test:e2e` run may need `npx playwright install chromium`. To run the same browser tests against the deployed site: `E2E_BASE_URL=https://shro-2002.github.io/metric-mirage/ npm run test:e2e`.
 
 The math is checked against an independent exact-fraction oracle on 500 seeded random datasets, using a different derivation (the average of the two one-sided decompositions). The browser tests cover the full journey, CSV upload and errors, clipboard copy, keyboard-only use, reduced motion, an automated WCAG A/AA scan, and horizontal overflow on a phone-sized viewport.
 

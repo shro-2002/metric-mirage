@@ -7,7 +7,7 @@ const scan = async (page: Page) => {
 }
 
 test('axe: no WCAG A/AA violations on the first screen, after the reveal, and with upload errors', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('./')
   expect(await scan(page)).toEqual([])
 
   await page.getByRole('button', { name: 'Look beneath the headline' }).click()
@@ -26,7 +26,7 @@ test('axe: no WCAG A/AA violations on the first screen, after the reveal, and wi
 test('keyboard only: reveal, copy, collapse, reach the upload control', async ({ browser }) => {
   const context = await browser.newContext({ permissions: ['clipboard-read', 'clipboard-write'] })
   const page = await context.newPage()
-  await page.goto('/')
+  await page.goto('./')
 
   await page.keyboard.press('Tab')
   await expect(page.getByRole('button', { name: 'Look beneath the headline' })).toBeFocused()
@@ -56,7 +56,7 @@ test('keyboard only: reveal, copy, collapse, reach the upload control', async ({
 })
 
 test('focus indicator is visible on the primary button', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('./')
   await page.keyboard.press('Tab')
   const outline = await page
     .getByRole('button', { name: 'Look beneath the headline' })

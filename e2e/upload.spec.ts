@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
 test('upload the second sample, see an honest non-reversal result, then return to the example', async ({ page }, testInfo) => {
-  await page.goto('/')
-  const sample = await (await page.request.get('/sample-consistent.csv')).text()
+  await page.goto('./')
+  const sample = await (await page.request.get('./sample-consistent.csv')).text()
   await page.getByLabel('Choose a CSV file').setInputFiles({ name: 'sample-consistent.csv', mimeType: 'text/csv', buffer: Buffer.from(sample) })
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^Success rates are up/)
@@ -18,7 +18,7 @@ test('upload the second sample, see an honest non-reversal result, then return t
 })
 
 test('an invalid file explains exactly what to fix and changes nothing', async ({ page }, testInfo) => {
-  await page.goto('/')
+  await page.goto('./')
   const bad = 'period,group,successes,total\nPrevious,A,50,100\ncurrent,A,60,100\nprevious,B,120,100\ncurrent,B,1,2\n'
   await page.getByLabel('Choose a CSV file').setInputFiles({ name: 'typo.csv', mimeType: 'text/csv', buffer: Buffer.from(bad) })
 
@@ -31,9 +31,9 @@ test('an invalid file explains exactly what to fix and changes nothing', async (
 })
 
 test('template and sample downloads are served', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('./')
   for (const name of ['metric-mirage-template.csv', 'sample-consistent.csv']) {
-    const response = await page.request.get(`/${name}`)
+    const response = await page.request.get(`./${name}`)
     expect(response.ok()).toBe(true)
     expect(await response.text()).toMatch(/^period,group,successes,total\n/)
   }
