@@ -40,7 +40,7 @@ export function Waterfall({ analysis, terms }: Props) {
   const bars: Bar[] = [
     {
       key: 'rate',
-      label: `Change within ${terms.groups}`,
+      label: terms.withinLabel,
       note: `Each ${terms.group}'s own ${terms.metric}, weighted by its size`,
       value: display.rateEffect,
       from: 0,
@@ -49,8 +49,8 @@ export function Waterfall({ analysis, terms }: Props) {
     },
     {
       key: 'composition',
-      label: `Shift in the mix of ${terms.groups}`,
-      note: `How the distribution of ${terms.shareOf} changed across ${terms.groups}`,
+      label: terms.distributionLabel,
+      note: `Effect of each ${terms.group}'s changing share of ${terms.shareOf}`,
       value: display.compositionEffect,
       from: r,
       to: n,
@@ -59,7 +59,7 @@ export function Waterfall({ analysis, terms }: Props) {
     },
     {
       key: 'net',
-      label: 'Overall change',
+      label: 'Overall result',
       note: `The headline: ${display.previousRate} → ${display.currentRate}`,
       value: display.net,
       from: 0,

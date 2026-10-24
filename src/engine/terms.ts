@@ -5,8 +5,10 @@ export interface Terms {
   group: string // "site"
   groups: string // "sites"
   unit: string // "students" — what `total` counts
-  shareOf: string // "students" / "the total count", as in "North's share of students"
-  mixPhrase: string // "the mix of students across sites" / "the mix across groups"
+  shareOf: string // "students" / "the total", as in "North's share of students"
+  mixPhrase: string // "distribution of students across sites" / "distribution of the total across groups"
+  withinLabel: string // "Site performance"
+  distributionLabel: string // "Changing distribution of students"
   briefingTitle: string
   decisionLead: string // "If next year's site funding followed the headline"
   eyebrow: string
@@ -20,7 +22,9 @@ export const EXAMPLE_TERMS: Terms = {
   groups: 'sites',
   unit: 'students',
   shareOf: 'students',
-  mixPhrase: 'the mix of students across sites',
+  mixPhrase: 'distribution of students across sites',
+  withinLabel: 'Site performance',
+  distributionLabel: 'Changing distribution of students',
   briefingTitle: 'Tutoring network performance review',
   decisionLead: "If next year's site funding followed this headline",
   eyebrow: 'Tutoring network · Performance review',
@@ -33,8 +37,10 @@ export const UPLOAD_TERMS: Terms = {
   group: 'group',
   groups: 'groups',
   unit: 'total count',
-  shareOf: 'the total count',
-  mixPhrase: 'the mix across groups',
+  shareOf: 'the total',
+  mixPhrase: 'distribution of the total across groups',
+  withinLabel: 'Group performance',
+  distributionLabel: 'Changing distribution of the total',
   briefingTitle: 'Performance review',
   decisionLead: 'If decisions followed this headline alone',
   eyebrow: 'Your data · Previous vs. current',

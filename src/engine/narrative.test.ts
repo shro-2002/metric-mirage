@@ -78,7 +78,7 @@ describe('explanation', () => {
     expect(text).toBe(
       "Every site's own pass rate fell, which on its own pulled the overall rate down by 2.0 points. " +
         "Meanwhile, North's share of students grew from 25.0% to 40.0%, while West's fell from 25.0% to 10.0%. " +
-        'North had the higher pass rate in both periods, so with a larger share of students there, the shift in mix added 6.0 points, more than offsetting the change within the sites.',
+        'North had the higher pass rate in both periods, so with a larger share of students there, the changing distribution added 6.0 points, more than offsetting the change within the sites.',
     )
     expect(text).not.toContain('=')
   })
@@ -90,7 +90,7 @@ describe('explanation', () => {
   })
 
   test('unchanged mix says so instead of inventing a shift', () => {
-    expect(explanation(analyze(CASES.consistent), UPLOAD_TERMS)).toMatch(/mix of groups did not change/)
+    expect(explanation(analyze(CASES.consistent), UPLOAD_TERMS)).toMatch(/share of the total stayed the same/)
   })
 })
 

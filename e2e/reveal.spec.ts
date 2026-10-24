@@ -27,9 +27,18 @@ test('headline → reveal: sites, finding and decomposition', async ({ page }, t
   await page.screenshot({ path: `test-results/screens/${testInfo.project.name}-2-revealed.png`, fullPage: true })
 
   // Composition wording describes changing shares, never students moving.
-  await expect(page.getByTestId('two-forces')).toContainText('North, the higher-performing site, accounted for a larger share of students, up from 25.0% to 40.0%')
-  await expect(page.getByText('How the distribution of students changed across sites')).toBeVisible()
-  await expect(page.locator('body')).not.toContainText(/ended up at|moved between|the stronger site/)
+  // Three steps, each effect in its own column, apart from the share figures.
+  const steps = page.getByTestId('forces').getByRole('listitem')
+  await expect(steps).toHaveCount(3)
+  await expect(steps.nth(0)).toContainText('Site performance')
+  await expect(steps.nth(0)).toContainText('−2.0')
+  await expect(steps.nth(1)).toContainText('Changing distribution of students')
+  await expect(steps.nth(1)).toContainText('+6.0')
+  await expect(steps.nth(1)).toContainText('North, the highest-performing site, accounted for 40.0% of students instead of 25.0%')
+  await expect(steps.nth(2)).toContainText('Overall result')
+  await expect(steps.nth(2)).toContainText('+4.0')
+  await expect(page.locator('body')).not.toContainText(/40\.0% \(\+6\.0/)
+  await expect(page.locator('body')).not.toContainText(/ended up at|moved between|the stronger site|shift in the mix/i)
 
   // Collapsing keeps focus on the toggle, which remains in place.
   const toggle = page.getByRole('button', { name: 'Hide the investigation' })

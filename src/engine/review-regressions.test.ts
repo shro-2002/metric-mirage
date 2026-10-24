@@ -46,7 +46,7 @@ describe('statistical review regressions', () => {
     const a = analyze(ds([['A', 102, 200, 153, 300], ['B', 100, 200, 50, 100], ['C', 180, 200, 252, 280], ['D', 20, 200, 12, 120]]))
     const text = explanation(a, UPLOAD_TERMS)
     expect(text).not.toMatch(/of the two|so with more/)
-    expect(text).toMatch(/Shares shifted among several groups/)
+    expect(text).toMatch(/Shares changed across several groups/)
   })
 
   test('reversal with 3+ share movers: briefing does not name a misleading pair', () => {

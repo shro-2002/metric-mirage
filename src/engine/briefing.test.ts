@@ -43,9 +43,9 @@ describe('briefing', () => {
   test('flagship text, verbatim', () => {
     expect(briefing(analyze(tutoringExample), EXAMPLE_TERMS)).toBe(
       'Tutoring network performance review: the overall pass rate rose from 62.5% to 66.5% (+4.0 percentage points). ' +
-        `Within-site pass rates changed by ${MINUS}2.0 points and the mix of students across sites by +6.0 points, which together account for the overall change (${MINUS}2.0 + 6.0 = +4.0). ` +
+        `The change within sites contributed ${MINUS}2.0 points and the changing distribution of students across sites contributed +6.0 points, which together account for the overall change (${MINUS}2.0 + 6.0 = +4.0). ` +
         "Every site's pass rate declined: North (80.0% → 78.0%), East (70.0% → 68.0%), South (60.0% → 58.0%) and West (40.0% → 38.0%). " +
-        "The overall increase reflects a shift in the mix toward higher-performing sites (North's share of students grew from 25.0% to 40.0%; West's fell from 25.0% to 10.0%), not improvement within sites. " +
+        "The overall increase reflects a changing distribution toward higher-performing sites (North's share of students grew from 25.0% to 40.0%; West's fell from 25.0% to 10.0%), not improvement within sites. " +
         'This is a descriptive analysis of two periods; it does not establish causes or statistical significance.',
     )
   })

@@ -1,6 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 
-import { briefingSentences, decisionNote, explanation, finding, twoForces } from '../engine/narrative'
+import { briefingSentences, decisionNote, explanation, finding, forces, type ForceKey } from '../engine/narrative'
 import { capitalize, type Terms } from '../engine/terms'
 import type { Analysis } from '../engine/types'
 import { BriefingCard } from './BriefingCard'
@@ -17,24 +17,29 @@ type Props = {
   terms: Terms
 }
 
-/** Color the two effect figures inside the "two forces" sentence to match the chart. */
-function ForcesSentence({ analysis, terms }: { analysis: Analysis; terms: Terms }) {
-  const text = twoForces(analysis, terms)
-  const { rateEffect, compositionEffect } = analysis.display
-  const rateTone = rateEffect.startsWith('+') ? 'improve' : rateEffect.startsWith('0') ? 'neutral' : 'decline'
-  const first = text.indexOf(`(${rateEffect} points)`)
-  const second = text.indexOf(`(${compositionEffect} points)`, first + 1)
-  if (first < 0 || second < 0) return <>{text}</>
-  const rateEnd = first + rateEffect.length + 1
-  const compEnd = second + compositionEffect.length + 1
+const TONE: Record<string, string> = { '+': 'improve', '0': 'neutral' }
+const toneOf = (key: ForceKey, value: string): string =>
+  key === 'composition' ? 'composition' : key === 'net' ? 'net' : (TONE[value[0]!] ?? 'decline')
+
+/** The "why" in three scannable steps; the effect size of each sits apart from its words. */
+function Forces({ analysis, terms }: { analysis: Analysis; terms: Terms }) {
   return (
-    <>
-      {text.slice(0, first + 1)}
-      <span className={`investigation__figure investigation__figure--${rateTone}`}>{rateEffect}</span>
-      {text.slice(rateEnd, second + 1)}
-      <span className="investigation__figure investigation__figure--composition">{compositionEffect}</span>
-      {text.slice(compEnd)}
-    </>
+    <ol className="forces" data-testid="forces">
+      {forces(analysis, terms).map((f) => (
+        <li key={f.key} className={`forces__item forces__item--${f.key}`}>
+          <span className="forces__label">{f.label}</span>
+          <span className={`forces__value num investigation__figure investigation__figure--${toneOf(f.key, f.value)}`}>
+            {f.value}
+            <span className="visually-hidden"> percentage points</span>
+            <span aria-hidden="true" className="forces__unit">
+              {' '}
+              pp
+            </span>
+          </span>
+          <p className="forces__text">{f.text}</p>
+        </li>
+      ))}
+    </ol>
   )
 }
 
@@ -67,9 +72,7 @@ export function Investigation({ id, analysis, terms }: Props) {
         </div>
 
         <div className="investigation__why" style={step(2)}>
-          <p className="investigation__forces" data-testid="two-forces">
-            <ForcesSentence analysis={analysis} terms={terms} />
-          </p>
+          <Forces analysis={analysis} terms={terms} />
           <aside className="investigation__decision" aria-label="What this means for the decision">
             <p className="investigation__decision-label">What this means for the decision</p>
             <p data-testid="decision-note">{decisionNote(analysis, terms)}</p>

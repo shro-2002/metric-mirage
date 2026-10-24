@@ -160,13 +160,20 @@ describe('App — CSV upload', () => {
 })
 
 describe('App — story after reveal', () => {
-  test('two-forces sentence text is exactly the engine sentence; decision note shown', async () => {
+  test('the three steps show exactly the engine text, each with its effect; decision note shown', async () => {
     const user = userEvent.setup()
     render(<App />)
     await user.click(screen.getByRole('button', { name: 'Look beneath the headline' }))
-    const { twoForces } = await import('./engine/narrative')
+    const { forces } = await import('./engine/narrative')
     const { EXAMPLE_TERMS } = await import('./engine/terms')
-    expect(screen.getByTestId('two-forces').textContent).toBe(twoForces(analyze(tutoringExample), EXAMPLE_TERMS))
+    const items = within(screen.getByTestId('forces')).getAllByRole('listitem')
+    const expected = forces(analyze(tutoringExample), EXAMPLE_TERMS)
+    expect(items).toHaveLength(3)
+    items.forEach((item, i) => {
+      expect(item).toHaveTextContent(expected[i]!.label)
+      expect(item).toHaveTextContent(`${expected[i]!.value} percentage points`)
+      expect(item).toHaveTextContent(expected[i]!.text)
+    })
     expect(screen.getByTestId('decision-note')).toHaveTextContent("If next year's site funding followed this headline")
   })
 })
