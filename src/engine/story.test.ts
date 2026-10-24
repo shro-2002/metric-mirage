@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest'
 import { tutoringExample } from '../data/tutoring-example'
 import { analyze } from './analyze'
 import { MINUS } from './format'
-import { decisionNote, twoForces } from './narrative'
+import { briefing, decisionNote, explanation, finding, twoForces } from './narrative'
 import { EXAMPLE_TERMS, UPLOAD_TERMS } from './terms'
 import type { Dataset } from './types'
 
@@ -22,7 +22,7 @@ const CASES: Dataset[] = [
 describe('twoForces', () => {
   test('flagship, verbatim', () => {
     expect(twoForces(analyze(tutoringExample), EXAMPLE_TERMS)).toBe(
-      `Two things changed at once: each site got slightly worse (${MINUS}2.0 points), and more students ended up at North, the stronger site (+6.0 points). The second outweighed the first.`,
+      `Two things changed at once: each site got slightly worse (${MINUS}2.0 points), and North, the higher-performing site, accounted for a larger share of students, up from 25.0% to 40.0% (+6.0 points). The second outweighed the first.`,
     )
   })
 
@@ -38,7 +38,7 @@ describe('twoForces', () => {
 describe('decisionNote', () => {
   test('flagship states the funding stakes without inventing outcomes', () => {
     expect(decisionNote(analyze(tutoringExample), EXAMPLE_TERMS)).toBe(
-      "If next year's site funding followed this headline, it would reward an improvement that no site achieved: every site's own pass rate fell. The rise came from where the students were, not from how the sites performed.",
+      "If next year's site funding followed this headline, it would reward an improvement that no site achieved: every site's own pass rate fell. The rise came from the changing distribution of students across sites, not from how the sites performed.",
     )
   })
 
@@ -48,5 +48,18 @@ describe('decisionNote', () => {
     expect(text).not.toMatch(/tutoring|\bsites?\b|students|pass rate|funding/i)
     if (a.pattern === 'reversal') expect(text).toMatch(/no group/)
     else expect(text).not.toMatch(/no group (achieved|had)/)
+  })
+})
+
+describe('composition wording', () => {
+  // The data shows counts and shares changing between periods, not individuals moving or why.
+  const MOVEMENT = /moved between|ended up|transferr|relocat|stronger|weaker|where the \w+ (were|sat)|because|caused/i
+  const all = [tutoringExample, ...CASES]
+  test.each(all.map((d, i) => [i, d] as const))('case %i never implies movement or cause', (_, data) => {
+    const a = analyze(data)
+    for (const terms of [EXAMPLE_TERMS, UPLOAD_TERMS]) {
+      const text = [finding, twoForces, explanation, decisionNote, briefing].map((f) => f(a, terms)).join(' ')
+      expect(text).not.toMatch(MOVEMENT)
+    }
   })
 })

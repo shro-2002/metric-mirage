@@ -19,9 +19,23 @@ test('headline → reveal: sites, finding and decomposition', async ({ page }, t
   // What a viewer sees immediately after clicking: the finding and the comparison must be on screen.
   await expect(page.getByTestId('finding')).toBeInViewport()
   await expect(page.getByTestId('change-summary')).toBeInViewport({ ratio: 0.9 })
-  if (testInfo.project.name === 'desktop') await expect(page.locator('#headline-figures')).toBeInViewport()
+  // The discovery leads: the finding sits in the upper part of the viewport, not below the hero.
+  const findingTop = (await page.getByTestId('finding').boundingBox())!.y
+  expect(findingTop).toBeLessThan(page.viewportSize()!.height * 0.3)
+  expect(findingTop).toBeGreaterThan(0)
   await page.screenshot({ path: `test-results/screens/${testInfo.project.name}-2a-reveal-first-view.png` })
   await page.screenshot({ path: `test-results/screens/${testInfo.project.name}-2-revealed.png`, fullPage: true })
+
+  // Composition wording describes changing shares, never students moving.
+  await expect(page.getByTestId('two-forces')).toContainText('North, the higher-performing site, accounted for a larger share of students, up from 25.0% to 40.0%')
+  await expect(page.getByText('How the distribution of students changed across sites')).toBeVisible()
+  await expect(page.locator('body')).not.toContainText(/ended up at|moved between|the stronger site/)
+
+  // Collapsing keeps focus on the toggle, which remains in place.
+  const toggle = page.getByRole('button', { name: 'Hide the investigation' })
+  await toggle.click()
+  await expect(page.getByRole('button', { name: 'Look beneath the headline' })).toBeFocused()
+  await expect(page.getByTestId('finding')).toHaveCount(0)
 })
 
 test('reduced motion: everything is visible immediately', async ({ browser }) => {

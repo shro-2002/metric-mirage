@@ -43,24 +43,15 @@ const step = (index: number) => ({ '--step': index }) as CSSProperties
 /** Mounted only after "Look beneath the headline"; moves focus to its heading on arrival. */
 export function Investigation({ id, analysis, terms }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null)
-  const summaryRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const heading = headingRef.current
     if (!heading) return
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
     heading.focus({ preventScroll: true })
-    // Prefer keeping the headline's figures in view above the finding and comparison, so the
-    // discovery reads as what lies beneath the same number. If both can't fit (small screens),
-    // bring the investigation to the top; its "Overall" row still carries the headline figure.
-    const figures = document.getElementById('headline-figures')
-    const summary = summaryRef.current
-    const fitsTogether =
-      figures && summary
-        ? summary.getBoundingClientRect().bottom - figures.getBoundingClientRect().top <= window.innerHeight - 16
-        : false
-    const anchor = fitsTogether && figures ? figures : heading
-    anchor.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    // Bring the discovery to the top of the viewport. The headline figure stays on screen as
+    // the "Overall" row of the comparison, so the context is kept without the hero above it.
+    heading.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
   }, [])
 
   return (
@@ -70,7 +61,7 @@ export function Investigation({ id, analysis, terms }: Props) {
           Beneath the headline
         </h2>
 
-        <div className="investigation__lead" style={step(1)} ref={summaryRef}>
+        <div className="investigation__lead" style={step(1)}>
           <FindingCallout text={finding(analysis, terms)} />
           <ChangeSummary analysis={analysis} terms={terms} />
         </div>

@@ -66,7 +66,7 @@ export function ShareShift({ groups, terms }: Props) {
   return (
     <figure className="shares">
       <figcaption className="shares__caption">
-        Where the {terms.unit} were: share of {terms.shareOf} by {terms.group}
+        Distribution of {terms.shareOf} across {terms.groups}, previous vs. current
       </figcaption>
       <div className="shares__row">
         <span className="shares__period">Previous</span>

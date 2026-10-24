@@ -6,7 +6,6 @@ export interface Terms {
   groups: string // "sites"
   unit: string // "students" — what `total` counts
   shareOf: string // "students" / "the total count", as in "North's share of students"
-  moreOf: string // "more students" / "more of the total count"
   mixPhrase: string // "the mix of students across sites" / "the mix across groups"
   briefingTitle: string
   decisionLead: string // "If next year's site funding followed the headline"
@@ -21,7 +20,6 @@ export const EXAMPLE_TERMS: Terms = {
   groups: 'sites',
   unit: 'students',
   shareOf: 'students',
-  moreOf: 'more students',
   mixPhrase: 'the mix of students across sites',
   briefingTitle: 'Tutoring network performance review',
   decisionLead: "If next year's site funding followed this headline",
@@ -36,7 +34,6 @@ export const UPLOAD_TERMS: Terms = {
   groups: 'groups',
   unit: 'total count',
   shareOf: 'the total count',
-  moreOf: 'more of the total count',
   mixPhrase: 'the mix across groups',
   briefingTitle: 'Performance review',
   decisionLead: 'If decisions followed this headline alone',

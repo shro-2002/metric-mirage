@@ -50,7 +50,7 @@ export function Waterfall({ analysis, terms }: Props) {
     {
       key: 'composition',
       label: `Shift in the mix of ${terms.groups}`,
-      note: `How the ${terms.unit} moved between ${terms.groups}`,
+      note: `How the distribution of ${terms.shareOf} changed across ${terms.groups}`,
       value: display.compositionEffect,
       from: r,
       to: n,

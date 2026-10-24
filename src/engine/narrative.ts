@@ -178,7 +178,7 @@ export const explanation = (analysis: Analysis, terms: Terms): string => {
     const level = levelComparison(gainer, loser, terms)
     sentences.push(
       level && compositionSign !== 0
-        ? `${gainer.name} ${level}, so with ${terms.moreOf} there, the shift in mix ${verb} ${mixAmount} points${offsets}.`
+        ? `${gainer.name} ${level}, so with a larger share of ${terms.shareOf} there, the shift in mix ${verb} ${mixAmount} points${offsets}.`
         : `Taken together, the shift in mix ${compositionSign === 0 ? 'left the overall rate unchanged' : `${verb} ${mixAmount} points${offsets}`}.`,
     )
   } else {
@@ -306,14 +306,14 @@ export const twoForces = (analysis: Analysis, terms: Terms): string => {
   const toward =
     pair && compositionSign !== 0
       ? sign(sub(averageRate(pair.gainer), averageRate(pair.loser))) > 0
-        ? `, the stronger ${terms.group}`
-        : `, the weaker ${terms.group}`
+        ? `, the higher-performing ${terms.group},`
+        : `, the lower-performing ${terms.group},`
       : ''
   const mix =
     compositionSign === 0
       ? `the mix of ${terms.groups} made no difference (${display.compositionEffect} points)`
       : pair
-        ? `more ${terms.unit === 'students' ? 'students' : 'of the total'} ended up at ${pair.gainer.name}${toward} (${display.compositionEffect} points)`
+        ? `${pair.gainer.name}${toward} accounted for a larger share of ${terms.shareOf}, up from ${pair.gainer.display.previousShare} to ${pair.gainer.display.currentShare} (${display.compositionEffect} points)`
         : `the mix across ${terms.groups} shifted (${display.compositionEffect} points)`
   const netSign = sign(add(decomposition.rateEffect, decomposition.compositionEffect))
   const verdict =
@@ -333,8 +333,8 @@ export const decisionNote = (analysis: Analysis, terms: Terms): string => {
   switch (analysis.pattern) {
     case 'reversal':
       return rising
-        ? `${terms.decisionLead}, it would reward an improvement that no ${terms.group} achieved: every ${terms.group}'s own ${terms.metric} fell. The rise came from where the ${terms.unit === 'students' ? 'students were' : 'totals sat'}, not from how the ${terms.groups} performed.`
-        : `${terms.decisionLead}, it would blame a decline that no ${terms.group} had: every ${terms.group}'s own ${terms.metric} rose. The fall came from the mix, not from how the ${terms.groups} performed.`
+        ? `${terms.decisionLead}, it would reward an improvement that no ${terms.group} achieved: every ${terms.group}'s own ${terms.metric} fell. The rise came from the changing distribution of ${terms.shareOf} across ${terms.groups}, not from how the ${terms.groups} performed.`
+        : `${terms.decisionLead}, it would blame a decline that no ${terms.group} had: every ${terms.group}'s own ${terms.metric} rose. The fall came from the changing distribution of ${terms.shareOf} across ${terms.groups}, not from how the ${terms.groups} performed.`
     case 'consistent':
       return `Here the headline and the ${terms.groups} agree, so the overall figure is a fair summary of the direction. Sizes still differ by ${terms.group}; see the evidence below.`
     case 'mixed':
